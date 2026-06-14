@@ -124,7 +124,7 @@ export async function buildInvoicePdf({ items, customer, invoiceNo, subtotal, de
   left('BANKING DETAILS', L + 12, y + 18, 9, bold, cyan);
   let bk = y + 36; const bx = L + 12;
   const bank = (k, v) => { left(k, bx, bk, 9, font, gray); left(v, bx + 95, bk, 9, bold, dark); bk += 14; };
-  bank('Bank', 'FNB');
+  bank('Bank', 'First National Bank');
   bank('Account Name', 'Next Gen Evolution (Pty) Ltd');
   bank('Account Number', '63150208940');
   bank('Branch Code', '250655');
@@ -169,7 +169,7 @@ function buildEmailText({ items, customer, invoiceNo, subtotal, delivery, grand 
     `TOTAL DUE:  ${ZAR(grand)} ZAR`,
     sep, '',
     'BANKING DETAILS',
-    'Bank:            FNB',
+    'Bank:            First National Bank',
     'Account Name:    Next Gen Evolution (Pty) Ltd',
     'Account Number:  63150208940',
     'Branch Code:     250655',
