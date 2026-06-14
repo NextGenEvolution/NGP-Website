@@ -1,0 +1,2619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGE — Next Gen Evolution</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // ── EMAILJS CONFIG ──
+  // Replace with your EmailJS Public Key (from https://dashboard.emailjs.com/admin/account)
+  (function(){ emailjs.init({ publicKey: 'vU4syZWVg-gFTkbn9' }); })();
+</script>
+<style>
+:root {
+  --black: #040c18;
+  --deep: #071525;
+  --card: #0a1a2e;
+  --border: rgba(41,182,212,0.1);
+  --border2: rgba(41,182,212,0.18);
+  --white: #f4f6fb;
+  --muted: #6b87aa;
+  --cyan: #2db8d8;
+  --cyan-bright: #4dd4f0;
+  --cyan-dim: rgba(45,184,216,0.12);
+  --cyan-glow: rgba(45,184,216,0.28);
+  --gold: #c8a96e;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 64px;
+  background: rgba(4,12,24,0.93);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(45,184,216,0.12);
+}
+.nav-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 18px; font-weight: 700;
+  letter-spacing: 0.08em; color: var(--white);
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: 13px; font-weight: 400; letter-spacing: 0.04em;
+  color: var(--muted); text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-right { display: flex; gap: 12px; align-items: center; }
+.btn-enquire {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--cyan);
+  border: 1px solid var(--cyan); padding: 8px 20px;
+  text-decoration: none; transition: all 0.2s;
+}
+.btn-enquire:hover { background: var(--cyan); color: var(--black); }
+.btn-cart {
+  font-size: 13px; color: var(--muted); background: none;
+  border: none; cursor: pointer; display: flex; align-items: center;
+  gap: 6px; padding: 8px 12px; transition: color 0.2s;
+}
+.btn-cart:hover { color: var(--white); }
+.cart-count {
+  background: var(--cyan); color: var(--black);
+  font-size: 10px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 100px 64px 80px;
+  position: relative; overflow: hidden;
+  background-color: var(--black);
+  background-image:
+    linear-gradient(rgba(45,184,216,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45,184,216,0.055) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 70% at 75% 50%, rgba(20,80,180,0.28) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 50% at 20% 60%, rgba(10,40,90,0.4) 0%, transparent 60%);
+}
+.hero-inner {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  max-width: 1200px; margin: 0 auto; width: 100%;
+}
+.hero-left { display: flex; flex-direction: column; }
+.hero-eyebrow-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 36px;
+  border: 1px solid rgba(45,184,216,0.35);
+  background: rgba(45,184,216,0.07);
+  padding: 8px 18px; border-radius: 50px;
+  width: fit-content;
+}
+.hero-eyebrow-pill::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--cyan); flex-shrink: 0;
+  box-shadow: 0 0 8px var(--cyan);
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(56px, 6vw, 96px);
+  font-weight: 400; line-height: 1.0;
+  letter-spacing: -0.02em; margin-bottom: 28px;
+}
+.hero h1 em {
+  font-style: italic; color: var(--cyan-bright);
+  display: block;
+}
+.hero-sub {
+  font-size: 15px; font-weight: 300; color: var(--muted);
+  max-width: 500px; margin-bottom: 44px; line-height: 1.85;
+}
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--cyan); color: var(--black);
+  padding: 14px 36px; text-decoration: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+.btn-outline {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--white);
+  border: 1px solid var(--border2); padding: 14px 36px;
+  text-decoration: none; transition: border-color 0.2s;
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.35); }
+.hero-right {
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  isolation: isolate;
+}
+.hero-logo-glow {
+  position: absolute;
+  width: 620px; height: 620px; border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(45,184,216,0.22) 0%,
+    rgba(20,80,200,0.16) 35%,
+    rgba(10,30,100,0.08) 60%,
+    transparent 75%);
+  pointer-events: none;
+  filter: blur(24px);
+}
+.hero-logo-img {
+  width: 100%; max-width: 500px; height: auto;
+  position: relative; z-index: 1;
+  filter:
+    drop-shadow(0 0 48px rgba(45,184,216,0.55))
+    drop-shadow(0 0 100px rgba(45,184,216,0.25))
+    drop-shadow(0 0 160px rgba(45,184,216,0.12));
+}
+.hero-stats {
+  display: flex; gap: 48px; margin-top: 56px; padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-weight: 500; color: var(--white);
+  line-height: 1;
+}
+.stat-num span { color: var(--cyan); }
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted); margin-top: 6px;
+}
+
+/* ── MARQUEE ── */
+.marquee-wrap {
+  overflow: hidden; border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--deep); padding: 14px 0;
+}
+.marquee-track {
+  display: flex; width: max-content;
+  animation: marquee 35s linear infinite;
+}
+.marquee-item {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 28px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted); white-space: nowrap;
+}
+.m-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── SECTION GENERIC ── */
+.section { padding: 96px 48px; }
+.section-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 52px); font-weight: 400;
+  line-height: 1.1; letter-spacing: -0.01em;
+}
+.section-title em { font-style: italic; color: var(--cyan); }
+.section-header {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; margin-bottom: 48px;
+}
+
+/* ── CATALOGUE HEADER ── */
+.catalogue-header {
+  padding: 80px 48px 48px;
+  border-bottom: 1px solid var(--border);
+  background: var(--deep);
+}
+.catalogue-header-inner {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  max-width: 1200px; margin: 0 auto;
+}
+.catalogue-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px,5vw,64px); font-weight: 400;
+  line-height: 1.1; letter-spacing: -0.01em;
+}
+.catalogue-header h2 em { font-style: italic; color: var(--white); opacity: 0.5; }
+.catalogue-header p {
+  font-size: 15px; color: var(--muted); line-height: 1.75; font-weight: 300;
+}
+
+/* ── FILTER TABS ── */
+.filter-bar {
+  display: flex; gap: 4px; padding: 24px 48px;
+  background: var(--deep); border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.filter-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+  background: transparent; border: 1px solid var(--border);
+  padding: 9px 22px; cursor: pointer; white-space: nowrap;
+  transition: all 0.2s;
+}
+.filter-btn.active, .filter-btn:hover {
+  background: var(--cyan); color: var(--black); border-color: var(--cyan);
+}
+
+/* ── PRODUCT GRID ── */
+.product-section { background: var(--deep); padding: 48px 48px 96px; }
+.product-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--border);
+  max-width: 1300px; margin: 0 auto;
+}
+.product-card {
+  background: var(--card);
+  display: flex; flex-direction: column;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.product-card:hover { background: #111827; }
+.product-img {
+  aspect-ratio: 1/1; overflow: hidden; position: relative;
+  background: #d8dce6;
+  display: flex; align-items: center; justify-content: center;
+}
+.product-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  padding: 0;
+  transition: transform 0.5s ease;
+}
+.product-card:hover .product-img img { transform: scale(1.04); }
+.prod-badges {
+  position: absolute; top: 14px; right: 14px;
+  display: flex; gap: 6px;
+}
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+  padding: 4px 10px; border-radius: 20px;
+}
+.badge-pen { background: rgba(41,182,212,0.15); color: var(--cyan); border: 1px solid rgba(41,182,212,0.3); }
+.badge-vial { background: rgba(200,169,110,0.12); color: var(--gold); border: 1px solid rgba(200,169,110,0.3); }
+.badge-nasal { background: rgba(120,160,220,0.12); color: #7fa8dc; border: 1px solid rgba(120,160,220,0.3); }
+.badge-rx { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+.product-body { padding: 28px 28px 24px; flex: 1; display: flex; flex-direction: column; }
+.prod-category {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 10px;
+}
+.prod-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px; font-weight: 500; line-height: 1.1;
+  margin-bottom: 6px; color: var(--white);
+}
+.prod-dose {
+  font-size: 14px; color: var(--muted); margin-bottom: 16px; font-weight: 300;
+}
+.prod-desc {
+  font-size: 14px; color: rgba(180,190,210,0.78);
+  line-height: 1.7; font-weight: 300; margin-bottom: 20px;
+  flex: 1;
+}
+.prod-features {
+  list-style: none; margin-bottom: 24px;
+  display: flex; flex-direction: column; gap: 8px;
+  border-top: 1px solid var(--border); padding-top: 20px;
+}
+.prod-features li {
+  font-size: 13px; color: var(--muted);
+  display: flex; align-items: center; gap: 10px;
+}
+.prod-features li::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--cyan); flex-shrink: 0;
+}
+.prod-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 20px; border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+.prod-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 500; color: var(--white);
+}
+.prod-price sup {
+  font-size: 15px; font-weight: 400;
+  font-family: 'Inter', sans-serif; color: var(--muted);
+}
+.prod-price sub {
+  font-size: 11px; font-family: 'Space Mono', monospace;
+  color: var(--muted); letter-spacing: 0.08em; margin-left: 3px;
+}
+.btn-add {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--cyan); color: var(--black);
+  border: none; padding: 12px 24px; cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.btn-add:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* ── WHY NGE ── */
+.why-section { background: var(--black); }
+.why-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+  background: var(--border); margin-top: 48px;
+}
+.why-card {
+  background: var(--black); padding: 36px 28px;
+  position: relative; overflow: hidden;
+}
+.why-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px; font-weight: 400; color: rgba(41,182,212,0.08);
+  position: absolute; top: 16px; right: 20px; line-height: 1;
+}
+.why-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 500; margin-bottom: 10px;
+  margin-top: 28px;
+}
+.why-text { font-size: 13px; color: var(--muted); line-height: 1.65; font-weight: 300; }
+
+/* ── CTA ── */
+.cta-section {
+  padding: 120px 48px; text-align: center;
+  background: var(--deep); border-top: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(41,182,212,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cta-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 20px;
+}
+.cta-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 6vw, 80px); font-weight: 400;
+  line-height: 1.1; margin-bottom: 20px; position: relative;
+}
+.cta-title em { font-style: italic; color: var(--cyan); }
+.cta-sub { font-size: 15px; color: var(--muted); font-weight: 300; margin-bottom: 40px; position: relative; }
+
+/* ── CONTACT MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--card); border: 1px solid var(--border2);
+  width: 100%; max-width: 560px; padding: 48px;
+  position: relative; max-height: 90vh; overflow-y: auto;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none; color: var(--muted);
+  font-size: 24px; cursor: pointer; transition: color 0.2s;
+}
+.modal-close:hover { color: var(--white); }
+.modal h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 400; margin-bottom: 8px;
+}
+.modal p { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-group { margin-bottom: 12px; }
+.form-group label {
+  display: block; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border2); color: var(--white);
+  padding: 10px 14px; font-family: 'Inter', sans-serif;
+  font-size: 14px; outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  border-color: var(--cyan);
+}
+.form-group textarea { resize: vertical; min-height: 100px; }
+.form-group select option { background: var(--card); }
+.btn-send {
+  width: 100%; background: var(--cyan); color: var(--black);
+  border: none; padding: 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; cursor: pointer;
+  transition: opacity 0.2s; margin-top: 8px;
+}
+.btn-send:hover { opacity: 0.85; }
+
+/* ── CART DRAWER ── */
+.cart-drawer {
+  position: fixed; top: 0; right: -440px; bottom: 0; z-index: 300;
+  width: 420px; background: var(--card);
+  border-left: 1px solid var(--border2);
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column;
+}
+.cart-drawer.open { right: 0; }
+.cart-backdrop {
+  position: fixed; inset: 0; z-index: 299;
+  background: rgba(0,0,0,0.6); display: none;
+}
+.cart-backdrop.open { display: block; }
+.cart-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 24px; border-bottom: 1px solid var(--border);
+}
+.cart-header h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 400;
+}
+.cart-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 22px; cursor: pointer;
+}
+.cart-items { flex: 1; overflow-y: auto; padding: 16px; }
+.cart-empty {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted); font-size: 14px;
+}
+.cart-item {
+  display: flex; gap: 14px; padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item-img {
+  width: 64px; height: 64px; object-fit: cover;
+  background: var(--deep); flex-shrink: 0;
+}
+.cart-item-info { flex: 1; }
+.cart-item-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 500; margin-bottom: 2px;
+}
+.cart-item-dose { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.cart-item-row { display: flex; align-items: center; justify-content: space-between; }
+.cart-item-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; color: var(--white);
+}
+.cart-item-remove {
+  background: none; border: none; color: var(--muted);
+  font-size: 12px; cursor: pointer; letter-spacing: 0.08em;
+  font-family: 'Space Mono', monospace;
+}
+.cart-item-remove:hover { color: #e55; }
+.cart-footer { padding: 20px; border-top: 1px solid var(--border); }
+.cart-total {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.cart-total span:first-child {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+}
+.cart-total span:last-child {
+  font-family: 'Cormorant Garamond', serif; font-size: 28px;
+}
+.btn-checkout {
+  width: 100%; background: var(--cyan); color: var(--black);
+  border: none; padding: 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-checkout:hover { opacity: 0.85; transform: translateY(-1px); }
+.btn-checkout svg { flex-shrink: 0; }
+
+/* ── SHIPPING MODAL ── */
+.shipping-section { margin-bottom: 28px; }
+.shipping-heading {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 12px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.shipping-section p { font-size: 14px; color: rgba(180,190,210,0.85); line-height: 1.75; }
+.shipping-list {
+  list-style: none; margin-top: 12px;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.shipping-list li {
+  font-size: 13px; color: var(--muted);
+  display: flex; align-items: center; gap: 10px;
+}
+.shipping-list li::before {
+  content: ''; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--cyan); flex-shrink: 0;
+}
+.shipping-rate-card {
+  background: var(--deep); border: 1px solid var(--border2);
+  padding: 18px 20px; margin-top: 12px;
+}
+.shipping-rate-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 500; margin-bottom: 14px; color: var(--white);
+}
+.shipping-rate-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--muted);
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.shipping-rate-row:last-child { border-bottom: none; }
+.shipping-rate-row span:last-child { color: var(--white); text-align: right; }
+
+/* ── PRODUCT PAMPHLET MODAL ── */
+.pamphlet-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(2,6,14,0.92); backdrop-filter: blur(12px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.pamphlet-overlay.open { display: flex; }
+.pamphlet {
+  background: var(--deep); width: 100%; max-width: 860px;
+  max-height: 90vh; overflow: hidden;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border2);
+  box-shadow: 0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(45,184,216,0.06);
+  position: relative;
+}
+.pamphlet-close {
+  position: absolute; top: 16px; right: 20px; z-index: 10;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  color: var(--muted); font-size: 18px; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; border-radius: 2px;
+}
+.pamphlet-close:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+.pamphlet-header {
+  display: grid; grid-template-columns: 260px 1fr;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.pamphlet-img-wrap {
+  background: #d8dce6; aspect-ratio: 1/1; max-height: 260px;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.pamphlet-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.pamphlet-hero {
+  padding: 28px 32px 24px; display: flex; flex-direction: column;
+  justify-content: flex-end; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--card) 0%, var(--deep) 100%);
+}
+.pamphlet-hero::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(45,184,216,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.pamphlet-eyebrow {
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 8px;
+}
+.pamphlet-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 38px;
+  font-weight: 500; line-height: 1.05; color: var(--white); margin-bottom: 6px;
+}
+.pamphlet-dose {
+  font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 16px;
+}
+.pamphlet-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.pamphlet-tag {
+  font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; padding: 4px 12px; border-radius: 20px;
+}
+.pamphlet-body {
+  overflow-y: auto; flex: 1;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+.pamphlet-section {
+  padding: 24px 28px; border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.pamphlet-section:nth-child(even) { border-right: none; }
+.pamphlet-section-full {
+  grid-column: 1 / -1; padding: 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+.pamphlet-section-title {
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.pamphlet-section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.pamphlet-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.pamphlet-list li {
+  font-size: 13px; color: rgba(180,195,215,0.85); line-height: 1.6;
+  display: flex; gap: 10px;
+}
+.pamphlet-list li::before {
+  content: ''; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--cyan); flex-shrink: 0; margin-top: 6px;
+}
+.pamphlet-dosage-steps { display: flex; flex-direction: column; gap: 10px; }
+.pamphlet-step {
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.pamphlet-step-num {
+  font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+  color: var(--black); background: var(--cyan); width: 20px; height: 20px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px; letter-spacing: 0;
+}
+.pamphlet-step-text { font-size: 13px; color: rgba(180,195,215,0.85); line-height: 1.6; }
+.pamphlet-warning {
+  background: rgba(200,169,110,0.07); border-left: 3px solid var(--gold);
+  padding: 10px 14px; font-size: 12px;
+  color: rgba(200,169,110,0.85); line-height: 1.6; margin-top: 12px;
+}
+.pamphlet-footer {
+  padding: 16px 28px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; background: var(--black);
+}
+.pamphlet-disclaimer {
+  font-size: 10px; font-family: 'Space Mono', monospace;
+  color: var(--muted); opacity: 0.6; letter-spacing: 0.04em; flex: 1;
+}
+.pamphlet-add {
+  font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  background: var(--cyan); color: var(--black); border: none;
+  padding: 12px 28px; cursor: pointer; transition: opacity 0.2s; flex-shrink: 0;
+}
+.pamphlet-add:hover { opacity: 0.85; }
+@media (max-width: 700px) {
+  .pamphlet-header { grid-template-columns: 1fr; }
+  .pamphlet-img-wrap { max-height: 200px; aspect-ratio: 16/9; }
+  .pamphlet-body { grid-template-columns: 1fr; }
+  .pamphlet-section { border-right: none; }
+  .pamphlet-section:nth-child(even) { border-right: none; }
+  .pamphlet-name { font-size: 28px; }
+}
+
+/* ── WHATSAPP ── */
+.whatsapp-btn {
+  position: fixed; bottom: 28px; right: 28px; z-index: 250;
+  background: #25d366; color: #fff;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px; border-radius: 50px;
+  text-decoration: none; font-size: 14px; font-weight: 600;
+  box-shadow: 0 8px 32px rgba(37,211,102,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(37,211,102,0.45); }
+.whatsapp-btn svg { width: 20px; height: 20px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--black); border-top: 1px solid var(--border);
+  padding: 48px 48px 28px;
+}
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.footer-brand-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.08em;
+}
+.footer-tagline {
+  font-size: 11px; color: var(--muted); letter-spacing: 0.05em;
+}
+.footer-right {
+  font-size: 11px; color: rgba(107,119,153,0.7);
+  text-align: right; line-height: 1.6; max-width: 420px;
+}
+
+/* ── CATEGORY DIVIDERS ── */
+.cat-divider {
+  grid-column: 1 / -1;
+  padding: 40px 28px 20px;
+  background: var(--deep);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 20px;
+}
+.cat-divider-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--cyan);
+}
+.cat-divider-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; color: var(--white);
+  margin-left: 4px;
+}
+.cat-divider-line {
+  flex: 1; height: 1px; background: var(--border);
+}
+.cat-divider-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero-right { display: none; }
+  .hero { padding: 120px 48px 80px; }
+}
+@media (max-width: 1100px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hero, .section, .product-section, .catalogue-header, .filter-bar { padding-left: 20px; padding-right: 20px; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .why-grid { grid-template-columns: repeat(2, 1fr); }
+  .catalogue-header-inner { grid-template-columns: 1fr; gap: 20px; }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+  .cart-drawer { width: 100%; right: -100%; }
+  .cart-drawer.open { right: 0; }
+}
+@media (max-width: 600px) {
+  .product-grid { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 52px; }
+  .hero { padding: 100px 20px 60px; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal { padding: 28px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="NGE Transparent logo.png" alt="NGE" style="height:36px;width:auto;display:block;" onerror="this.style.display='none';this.parentElement.childNodes[0].nodeValue='NGE'">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#catalogue">Catalogue</a></li>
+    <li><a href="#science">Science</a></li>
+    <li><a href="#contact" onclick="openContact(event)">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#contact" class="btn-enquire" onclick="openContact(event)">Enquire</a>
+    <button class="btn-cart" onclick="toggleCart()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+      CART
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow-pill">Pharmaceutical-Grade · Swiss Origin</div>
+      <h1>Science.<br>Strength.<br><em>Transformation.</em></h1>
+      <p class="hero-sub">Next Gen Evolution engineers advanced pre-filled peptide pens, vials and nasal spray for athletes, clinicians, and longevity pioneers — clinically informed, meticulously dosed, delivered with precision.</p>
+      <div class="hero-actions">
+        <a href="#catalogue" class="btn-primary">View Catalogue</a>
+        <a href="#science" class="btn-outline">The Science</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num"><span>24</span></div>
+          <div class="stat-label">Compounds</div>
+        </div>
+        <div>
+          <div class="stat-num"><span>3</span></div>
+          <div class="stat-label">Delivery Forms</div>
+        </div>
+        <div>
+          <div class="stat-num"><span>99</span>%<span>+</span></div>
+          <div class="stat-label">Purity Grade</div>
+        </div>
+        <div>
+          <div class="stat-num">ZA<span>R</span></div>
+          <div class="stat-label">Priced in Rand</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-logo-glow"></div>
+      <img src="NGE Transparent logo.png" alt="Next Gen Evolution" class="hero-logo-img" onerror="this.style.opacity='0.2'">
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- CATALOGUE HEADER -->
+<div class="catalogue-header" id="catalogue">
+  <div class="catalogue-header-inner">
+    <div>
+      <div class="section-tag">The Catalogue</div>
+      <h2>Engineered <em>compounds.</em></h2>
+    </div>
+    <p>Pre-filled pens, self-mix vials, and nasal sprays — every format formulated with sterile excipients and Swiss-grade manufacturing standards.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterProducts(event,'all')">ALL</button>
+  <button class="filter-btn" onclick="filterProducts(event,'pen')">PEN</button>
+  <button class="filter-btn" onclick="filterProducts(event,'vial')">VIAL</button>
+  <button class="filter-btn" onclick="filterProducts(event,'nasal')">NASAL</button>
+</div>
+
+<!-- PRODUCTS -->
+<div class="product-section">
+  <div class="product-grid" id="productGrid"></div>
+</div>
+
+<!-- WHY NGE -->
+<section class="section why-section" id="science">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-tag">Why NGE</div>
+    <div class="section-title">Built on five <em>non-negotiables.</em></div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <div class="why-title">Targeted Results</div>
+        <p class="why-text">Peptides work at the cellular level for maximum, precise impact.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <div class="why-title">Faster Recovery</div>
+        <p class="why-text">Reduce downtime and bounce back stronger after every session.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <div class="why-title">Clinically Studied</div>
+        <p class="why-text">Backed by science and trusted by performance professionals.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">04</div>
+        <div class="why-title">Peak Performance</div>
+        <p class="why-text">Optimize strength, endurance, and overall vitality.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">05</div>
+        <div class="why-title">Longevity & Wellness</div>
+        <p class="why-text">Support long-term health, youth, and lifespan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-eyebrow">Unlock Your Full Potential</div>
+  <h2 class="cta-title">Performance is a <em>protocol.</em></h2>
+  <p class="cta-sub">Speak with our team about wholesale, clinical partnerships, or athlete protocols.</p>
+  <a href="#" class="btn-primary" onclick="openContact(event)">CONTACT NGE</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="NGE Transparent logo.png" alt="NGE" style="height:44px;width:auto;" onerror="this.style.display='none'">
+      <div>
+        <div class="footer-brand-name">NGE</div>
+        <div class="footer-tagline">Next Gen Evolution · Science · Strength · Transformation</div>
+      </div>
+    </div>
+    <div class="footer-right">
+      For research and clinical use. Not for human consumption without medical supervision.<br>
+      © 2026 NGE. All rights reserved.<br>
+      <a href="#" onclick="openShipping(event)" style="color:var(--muted);font-size:11px;font-family:'Space Mono',monospace;letter-spacing:0.08em;text-decoration:none;border-bottom:1px solid rgba(107,135,170,0.35);padding-bottom:1px;transition:color 0.2s;margin-right:16px;" onmouseover="this.style.color='var(--cyan)'" onmouseout="this.style.color='var(--muted)'">SHIPPING POLICY</a>
+      <a href="#" onclick="openReturns(event)" style="color:var(--muted);font-size:11px;font-family:'Space Mono',monospace;letter-spacing:0.08em;text-decoration:none;border-bottom:1px solid rgba(107,135,170,0.35);padding-bottom:1px;transition:color 0.2s;" onmouseover="this.style.color='var(--cyan)'" onmouseout="this.style.color='var(--muted)'">RETURNS POLICY</a>
+    </div>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="cart-backdrop" id="cartBackdrop" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button class="cart-close" onclick="toggleCart()">×</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">Your cart is empty.</div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total" style="margin-bottom:6px;">
+      <span>Subtotal</span>
+      <span id="cartSubtotal" style="font-size:18px;">R0</span>
+    </div>
+    <div class="cart-total" style="margin-bottom:14px;">
+      <span>Delivery</span>
+      <span id="cartDelivery" style="font-size:15px;font-family:'Space Mono',monospace;letter-spacing:0.06em;">R100</span>
+    </div>
+    <div style="border-top:1px solid var(--border2);margin-bottom:16px;"></div>
+    <div class="cart-total">
+      <span>Total</span>
+      <span id="cartTotal">R0 ZAR</span>
+    </div>
+    <button class="btn-checkout" onclick="checkoutPayfast()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H5.2L4 4z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+      CHECKOUT
+    </button>
+    <div style="text-align:center;margin-top:10px;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:0.08em;color:var(--muted);opacity:0.7;">We'll email your invoice to complete the order</div>
+  </div>
+</div>
+
+<!-- PRODUCT PAMPHLET MODAL -->
+<div class="pamphlet-overlay" id="pamphletModal">
+  <div class="pamphlet">
+    <button class="pamphlet-close" onclick="closePamphlet()">×</button>
+    <div class="pamphlet-header">
+      <div class="pamphlet-img-wrap">
+        <img id="pm-img" src="" alt="">
+      </div>
+      <div class="pamphlet-hero">
+        <div class="pamphlet-eyebrow" id="pm-category"></div>
+        <div class="pamphlet-name" id="pm-name"></div>
+        <div class="pamphlet-dose" id="pm-dose"></div>
+        <div class="pamphlet-tags" id="pm-tags"></div>
+      </div>
+    </div>
+    <div class="pamphlet-body" id="pm-body"></div>
+    <div class="pamphlet-footer">
+      <div class="pamphlet-disclaimer">For research use only · Not for human consumption without medical supervision · NGE © 2026</div>
+      <button class="pamphlet-add" id="pm-add-btn">+ ADD TO CART</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHIPPING POLICY MODAL -->
+<div class="modal-overlay" id="shippingModal">
+  <div class="modal" style="max-width:620px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeShipping()">×</button>
+    <h3>Shipping Policy</h3>
+
+    <div class="shipping-section">
+      <div class="shipping-heading">National Deliveries</div>
+      <p>NGE will deliver your order to your home or office at most locations within the Republic of South Africa.</p>
+    </div>
+
+    <div class="shipping-section">
+      <div class="shipping-heading">Delivery Services</div>
+      <p>NGE uses a trusted, well-established courier company for the shipping and delivery of your parcel to ensure you receive it on time and in good condition. Once we've received your order, we'll send you an e-mail with tracking details. To follow up on the shipping of your order, please contact <a href="mailto:sales@nextgenevolution.co.za" style="color:var(--cyan);text-decoration:none;">sales@nextgenevolution.co.za</a>.</p>
+      <p style="margin-top:12px;">Courier companies do not deliver to P.O. Boxes or the post office. Please provide the following information when requested at checkout:</p>
+      <ul class="shipping-list">
+        <li>Contact Name and Number</li>
+        <li>Street Address (if complex — Name of Complex and Unit Number)</li>
+        <li>City / Town</li>
+        <li>Postal Code</li>
+      </ul>
+      <p style="margin-top:12px;color:#e07070;font-size:13px;">Please note that NGE cannot refund any product(s) which were not delivered due to an incorrect address.</p>
+    </div>
+
+    <div class="shipping-section">
+      <div class="shipping-heading">Delivery Timelines &amp; Rates</div>
+      <div class="shipping-rate-card">
+        <div class="shipping-rate-title">Standard Delivery</div>
+        <div class="shipping-rate-row">
+          <span>Delivery Timeline</span>
+          <span>3 – 5 business days</span>
+        </div>
+        <div class="shipping-rate-row">
+          <span>Rate</span>
+          <span>R100 &nbsp;<span style="color:var(--cyan);font-size:11px;font-family:'Space Mono',monospace;">FREE on orders over R3,000</span></span>
+        </div>
+      </div>
+      <p style="margin-top:14px;font-size:13px;color:var(--muted);">The courier only delivers during normal working hours. Please ensure someone will be available to receive the parcel, or provide your work address.</p>
+    </div>
+
+    <button class="btn-send" onclick="closeShipping()" style="margin-top:8px;">CLOSE</button>
+  </div>
+</div>
+
+<!-- RETURNS POLICY MODAL -->
+<div class="modal-overlay" id="returnsModal">
+  <div class="modal" style="max-width:620px;max-height:85vh;overflow-y:auto;">
+    <button class="modal-close" onclick="closeReturns()">×</button>
+    <h3>Returns &amp; Refund Policy</h3>
+
+    <div class="shipping-section">
+      <div class="shipping-heading">Returning a Product</div>
+      <p>The customer must notify NGE in writing within <strong style="color:var(--white);">7 days</strong> of receiving the product and return the product to NGE. When returning any product, please ensure that it is returned in its original condition and with the original packaging — including any documentation, manuals, warranty cards and other accessories.</p>
+      <p style="margin-top:12px;">The cost of returning the product to NGE is for the consumer's account.</p>
+      <p style="margin-top:12px;">Please contact us at <a href="mailto:sales@nextgenevolution.co.za" style="color:var(--cyan);text-decoration:none;">sales@nextgenevolution.co.za</a> for our return address.</p>
+    </div>
+
+    <div class="shipping-section">
+      <div class="shipping-heading">Refund Timeline</div>
+      <div class="shipping-rate-card">
+        <div class="shipping-rate-row">
+          <span>Inspection &amp; Processing</span>
+          <span>14 – 30 days</span>
+        </div>
+        <div class="shipping-rate-row">
+          <span>Handling Fee</span>
+          <span>Up to 15% of order value <span style="font-size:11px;color:var(--muted);">(case-by-case)</span></span>
+        </div>
+      </div>
+      <p style="margin-top:14px;font-size:13px;color:var(--muted);">Please allow 14 – 30 days for your return to be inspected and for us to process your credit and arrange your refund.</p>
+    </div>
+
+    <div class="shipping-section">
+      <div class="shipping-heading">Faulty or Damaged Products</div>
+      <p>Should a product be faulty or damaged, we will arrange with the manufacturer, importer, or supplier to assess the product. We are restricted to the supplier's guarantees and warranties, which may mean replacing the product rather than issuing a refund.</p>
+    </div>
+
+    <button class="btn-send" onclick="closeReturns()" style="margin-top:8px;">CLOSE</button>
+  </div>
+</div>
+
+<!-- CHECKOUT DETAILS MODAL -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal" style="max-width:560px;">
+    <button class="modal-close" onclick="closeCheckoutModal()">×</button>
+    <h3>Delivery Details</h3>
+    <p>Please provide your details to place your order. We'll email you an invoice to complete payment.</p>
+
+    <div class="form-row">
+      <div class="form-group"><label>First Name *</label><input id="co-firstname" type="text" placeholder=""></div>
+      <div class="form-group"><label>Last Name *</label><input id="co-lastname" type="text" placeholder=""></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Email Address *</label><input id="co-email" type="email" placeholder=""></div>
+      <div class="form-group"><label>Phone Number *</label><input id="co-phone" type="tel" placeholder=""></div>
+    </div>
+    <div class="form-group"><label>Street Address *</label><input id="co-address" type="text" placeholder="e.g. 12 Oak Street, Apt 3B"></div>
+    <div class="form-row">
+      <div class="form-group"><label>City *</label><input id="co-city" type="text" placeholder=""></div>
+      <div class="form-group"><label>Province *</label>
+        <select id="co-province">
+          <option value="">— Select —</option>
+          <option>Gauteng</option>
+          <option>Western Cape</option>
+          <option>KwaZulu-Natal</option>
+          <option>Eastern Cape</option>
+          <option>Limpopo</option>
+          <option>Mpumalanga</option>
+          <option>North West</option>
+          <option>Free State</option>
+          <option>Northern Cape</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Postal Code *</label><input id="co-postal" type="text" placeholder=""></div>
+      <div class="form-group"><label>Special Instructions</label><input id="co-notes" type="text" placeholder="Optional"></div>
+    </div>
+
+    <!-- Order summary inside modal -->
+    <div id="co-summary" style="margin:20px 0 16px;padding:16px;background:var(--deep);border:1px solid var(--border);font-size:13px;"></div>
+
+    <div id="co-status" style="display:none;font-size:12px;margin-bottom:12px;padding:10px 14px;font-family:'Space Mono',monospace;letter-spacing:0.05em;"></div>
+    <button class="btn-send" id="co-submit" onclick="submitCheckout()">PLACE ORDER</button>
+    <p style="text-align:center;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:0.08em;color:var(--muted);margin-top:12px;opacity:0.7;">Your order is emailed to NGE · invoice to follow · ZAR</p>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeContact()">×</button>
+    <h3>Contact NGE</h3>
+    <p>Share your details and message — our team will respond shortly.</p>
+    <div class="form-row">
+      <div class="form-group"><label>First name</label><input id="cf-firstname" type="text" placeholder=""></div>
+      <div class="form-group"><label>Last name</label><input id="cf-lastname" type="text" placeholder=""></div>
+    </div>
+    <div class="form-group"><label>Email</label><input id="cf-email" type="email" placeholder=""></div>
+    <div class="form-group"><label>Phone (optional)</label><input id="cf-phone" type="tel" placeholder=""></div>
+    <div class="form-group"><label>Subject (optional)</label><input id="cf-subject" type="text" placeholder=""></div>
+    <div class="form-group"><label>Message</label><textarea id="cf-message" placeholder=""></textarea></div>
+    <div id="cf-status" style="display:none;font-size:13px;margin-bottom:12px;padding:10px 14px;border-radius:4px;font-family:'Space Mono',monospace;letter-spacing:0.05em;"></div>
+    <button class="btn-send" id="cf-submit" onclick="sendContactForm()">SEND MESSAGE</button>
+  </div>
+</div>
+
+<script>
+// ── PRODUCT DATA ──
+const products = [
+  // ── PENS ──
+  {
+    id: 1, type: 'pen',
+    img: 'Xenotropin pen.jpeg',
+    category: 'HGH · 191 Amino Acid Chain',
+    name: 'Xenotropin',
+    dose: '90 IU · 98% Purity',
+    desc: 'Pharmaceutical-grade recombinant human growth hormone in a multidose pre-filled pen. Supports lean mass, recovery, sleep architecture, and systemic regeneration.',
+    features: ['Lean muscle & body composition', 'Deeper sleep & recovery', 'Cellular repair & longevity'],
+    price: 2500,
+    handling: [
+      'Store refrigerated at 2–8 °C at all times',
+      'Do not freeze — freezing permanently degrades the peptide',
+      'Protect from direct sunlight and heat',
+      'Once in use, keep refrigerated and use within 28 days',
+      'Do not shake the pen — swirl gently if needed',
+      'Keep out of reach of children',
+    ],
+    dosage: [
+      { step: 'Starting dose: 1–2 clicks subcutaneous injection daily' },
+      { step: 'Intermediate protocol: 2–3 clicks/day for body composition goals' },
+      { step: 'Advanced use: up to 4 clicks/day under medical supervision' },
+      { step: 'Inject subcutaneously in the abdomen, thigh, or upper arm' },
+      { step: 'Best administered before bed or immediately post-workout to align with natural GH pulses' },
+      { step: 'Recommended cycle: 3–6 months on, 1 month off' },
+    ],
+    warning: 'Monitor fasting glucose and IGF-1 levels regularly. Do not use if you have active malignancy. Consult a qualified practitioner before use.',
+  },
+  {
+    id: 2, type: 'pen',
+    img: 'Retatrutide 32mg Pen.jpeg',
+    category: 'GLP-1 / GIP / Glucagon Tri-Agonist',
+    name: 'Retatrutide 32MG',
+    dose: '32 mg Pre-Filled Pen',
+    desc: 'The most advanced GLP/GIP/Glucagon tri-agonist available. Engineered for aggressive fat loss and metabolic restoration in a single pen.',
+    features: ['Triple-pathway metabolic action', 'Significant fat loss & appetite control', 'Improves glucose & cardiovascular markers'],
+    price: 2200,
+    handling: [
+      'Store refrigerated at 2–8 °C before first use',
+      'After first use, may be stored at room temperature (≤25 °C) for up to 30 days',
+      'Do not freeze',
+      'Protect from light — store in the original case between doses',
+      'Do not use if solution appears cloudy or contains particles',
+      'Discard pen after 30 days of first use regardless of remaining volume',
+    ],
+    dosage: [
+      { step: 'Week 1–4: 2 mg subcutaneous injection once weekly' },
+      { step: 'Week 5–8: Titrate to 4 mg once weekly if well tolerated' },
+      { step: 'Week 9–12: Titrate to 8 mg once weekly based on response' },
+      { step: 'Maintenance: up to 12 mg once weekly (maximum dose)' },
+      { step: 'Inject subcutaneously in the abdomen, thigh, or upper arm — rotate injection sites' },
+      { step: 'Administer on the same day each week; may be taken with or without food' },
+    ],
+    warning: 'Contraindicated in personal or family history of medullary thyroid carcinoma or MEN2. Monitor for gastrointestinal side effects during titration. Titrate slowly to improve tolerance.',
+  },
+  {
+    id: 3, type: 'pen',
+    img: 'Tirzepatide pen.jpeg',
+    category: 'GLP-1 / GIP Dual Agonist',
+    name: 'Tirzepatide Pen',
+    dose: '30 mg Pre-Filled Pen',
+    desc: 'Dual incretin signaling in a convenient pre-filled pen — precise weekly dosing for superior fat loss and metabolic recomposition.',
+    features: ['Dual GLP-1 + GIP action', 'Powerful appetite control', 'Enhanced insulin sensitivity'],
+    price: 2000,
+    handling: [
+      'Store refrigerated at 2–8 °C before first use',
+      'After first use, store at room temperature (≤30 °C) for up to 21 days',
+      'Do not freeze',
+      'Keep in original packaging away from light',
+      'Do not use if solution is discoloured or contains visible particles',
+      'Discard after 21 days of first use',
+    ],
+    dosage: [
+      { step: 'Week 1–4: 2.5 mg subcutaneous injection once weekly' },
+      { step: 'Week 5–8: Increase to 5 mg once weekly' },
+      { step: 'Week 9–12: Increase to 7.5 mg once weekly if needed' },
+      { step: 'Maintenance: 10–15 mg once weekly (maximum 15 mg/week)' },
+      { step: 'Inject in the abdomen, thigh, or upper arm — rotate sites each week' },
+      { step: 'Inject on the same day weekly; timing independent of meals' },
+    ],
+    warning: 'Slow titration is key to minimising nausea and GI discomfort. Contraindicated with personal/family history of thyroid C-cell tumours. Consult your practitioner before adjusting dose.',
+  },
+  {
+    id: 4, type: 'pen',
+    img: 'Wolverine 32mg pen.jpeg',
+    category: 'TB-500 + BPC-157 Healing Blend',
+    name: 'Wolverine',
+    dose: '32 mg · 16 mg TB-500 + 16 mg BPC-157',
+    desc: 'The legendary regenerative stack in a single pen. Engineered for injury recovery, joint health, and tendon, ligament, and gut repair.',
+    features: ['Combined TB-500 + BPC-157 healing', 'Accelerates recovery & reduces downtime', 'Muscle, tendon, ligament & gut health'],
+    price: 1700,
+    handling: [
+      'Store refrigerated at 2–8 °C',
+      'Do not freeze or expose to temperatures above 30 °C',
+      'Protect from direct sunlight',
+      'Once in use, refrigerate and use within 28 days',
+      'Swirl gently before use — do not shake',
+    ],
+    dosage: [
+      { step: 'Acute injury loading: 500 mcg subcutaneous or intramuscular, twice daily for 2 weeks' },
+      { step: 'Maintenance: 250–300 mcg once daily or every other day' },
+      { step: 'Inject near the site of injury or systemically in the abdomen' },
+      { step: 'General recovery protocol: 250–500 mcg daily for 4–8 weeks' },
+      { step: 'Gut health protocol: 250 mcg subcutaneous daily for 4–6 weeks' },
+      { step: 'Allow 4–6 weeks off between cycles' },
+    ],
+    warning: 'Not recommended during active cancer treatment. BPC-157 may promote cell proliferation — avoid if malignancy risk is present. Consult a practitioner for personalised dosing.',
+  },
+  {
+    id: 5, type: 'pen',
+    img: 'Delta recover 27mg pen.jpeg',
+    category: 'DSIP · CJC-1295 · BPC-157',
+    name: 'Delta Recover',
+    dose: '27 mg Pre-Filled Pen',
+    desc: 'A precision-blended nighttime recovery formula: deep delta-wave sleep, pulsatile GH release, and continuous tissue repair while you rest.',
+    features: ['Deep restorative delta sleep', 'Natural GH pulse via CJC-1295', 'Overnight tissue & gut healing'],
+    price: 1700,
+    handling: [
+      'Store refrigerated at 2–8 °C',
+      'Do not freeze',
+      'Protect from light — store in the original case',
+      'Once in use, refrigerate and use within 28 days',
+      'Swirl gently before use — never shake',
+    ],
+    dosage: [
+      { step: 'Administer 30–60 minutes before sleep for optimal effect' },
+      { step: 'Standard dose: 100–300 mcg subcutaneous injection at bedtime' },
+      { step: 'Inject into the abdomen — rotate sites nightly' },
+      { step: 'Protocol: 5 days on, 2 days off' },
+      { step: 'Recommended cycle length: 8–12 weeks' },
+      { step: 'Do not use with stimulants or heavy exercise within 2 hours of injection' },
+    ],
+    warning: 'DSIP may cause mild drowsiness — do not drive after administration. CJC-1295 may cause transient water retention. Discontinue if vivid dreams or restlessness persist.',
+  },
+  {
+    id: 6, type: 'pen',
+    img: 'Kisspeptin-10 Pen.jpeg',
+    category: 'Hypothalamic Signaling Peptide',
+    name: 'Kisspeptin-10',
+    dose: '10 mg Pre-Filled Pen',
+    desc: 'Activates the HPG axis at the source — the master regulator of LH, FSH, and endogenous testosterone production for men and women.',
+    features: ['Stimulates natural testosterone', 'Restores reproductive signaling', 'Libido & hormonal vitality'],
+    price: 1350,
+    handling: [
+      'Store refrigerated at 2–8 °C',
+      'Do not freeze or expose to heat above 25 °C',
+      'Protect from light at all times',
+      'Once in use, use within 21 days',
+      'Swirl gently before use — do not shake',
+    ],
+    dosage: [
+      { step: 'Standard dose: 50 mcg subcutaneous injection' },
+      { step: 'Administer 30–60 minutes before sleep or before exercise' },
+      { step: 'Frequency: 3–5 times per week' },
+      { step: 'Advanced protocol: up to 100 mcg per dose under practitioner guidance' },
+      { step: 'Inject subcutaneously in the abdomen' },
+      { step: 'Recommended cycle: 4–8 weeks on, 2–4 weeks off' },
+    ],
+    warning: 'Monitor hormonal panels (LH, FSH, testosterone) every 4–6 weeks. Not recommended during pregnancy. Effects vary significantly between individuals — begin at the lowest dose.',
+  },
+  {
+    id: 7, type: 'pen',
+    img: 'MOTS-C 60mg pen.jpeg',
+    category: 'Mitochondrial Peptide',
+    name: 'MOTS-C',
+    dose: '60 mg / 3 ml Pre-Filled Pen',
+    desc: 'A mitochondrial-derived peptide that ignites cellular energy, improves insulin sensitivity, and acts as a master regulator of metabolic and exercise capacity.',
+    features: ['Boosts mitochondrial function & energy', 'Improves insulin sensitivity', 'Endurance & cellular longevity'],
+    price: 1200,
+    handling: [
+      'Store refrigerated at 2–8 °C',
+      'Do not freeze',
+      'Protect from light',
+      'Once in use, use within 28 days',
+      'Swirl gently before drawing dose',
+    ],
+    dosage: [
+      { step: 'Standard dose: 5–10 mg subcutaneous or intramuscular injection weekly' },
+      { step: 'Split protocol: 2–5 mg administered 2–3 times per week' },
+      { step: 'Inject in the abdomen or upper thigh' },
+      { step: 'Best administered in the morning for energy and metabolic effect' },
+      { step: 'Recommended cycle: 4–12 weeks on, 4 weeks off' },
+    ],
+    warning: 'Monitoring of fasting glucose and insulin sensitivity markers is recommended. May amplify effects of insulin or glucose-lowering medications — adjust accordingly under practitioner guidance.',
+  },
+  {
+    id: 8, type: 'pen',
+    img: 'NAD+ Pen.jpeg',
+    category: 'Nicotinamide Adenine Dinucleotide',
+    name: 'NAD+',
+    dose: '1000 mg Pre-Filled Pen',
+    desc: 'The fuel behind every cell. NAD+ restores mitochondrial output, sharpens cognition, and is the cornerstone of modern longevity protocols.',
+    features: ['Cellular energy & repair', 'Cognitive clarity & focus', 'Anti-aging at the mitochondrial level'],
+    price: 1300,
+    handling: [
+      'Store at room temperature or refrigerated at 2–8 °C',
+      'Protect from light and direct heat',
+      'Avoid temperatures above 30 °C',
+      'Once in use, use within 30 days',
+      'Do not freeze',
+    ],
+    dosage: [
+      { step: 'Loading phase (Days 1–7): 100–250 mg subcutaneous injection daily' },
+      { step: 'Maintenance: 50–100 mg subcutaneous injection daily' },
+      { step: 'Inject slowly to minimise injection site warmth or flushing' },
+      { step: 'Best administered in the morning' },
+      { step: 'Cycle: 30–60 days continuous, then reassess with practitioner' },
+    ],
+    warning: 'Inject slowly — rapid administration can cause transient warmth, flushing, or nausea at the injection site. This is normal and typically resolves within minutes. Reduce injection rate if discomfort persists.',
+  },
+  {
+    id: 9, type: 'pen',
+    img: 'GHK-Cu Pen.jpeg',
+    category: 'Copper Peptide · Regenerative',
+    name: 'GHK-CU Pen',
+    dose: '60 mg Pre-Filled Pen',
+    desc: 'Copper-bound tripeptide in a pre-filled pen for daily, precision dosing — drives collagen synthesis, skin remodeling, and tissue regeneration.',
+    features: ['Skin elasticity & collagen synthesis', 'Hair follicle stimulation', 'Wound healing & anti-inflammatory'],
+    price: 850,
+    handling: [
+      'Store refrigerated at 2–8 °C',
+      'Do not freeze',
+      'Protect from sunlight',
+      'Once in use, use within 28 days',
+      'Swirl gently before administering dose',
+    ],
+    dosage: [
+      { step: 'Standard dose: 200–500 mcg subcutaneous injection daily or every other day' },
+      { step: 'Inject near the target tissue area (scalp, face region) or systemically in the abdomen' },
+      { step: 'For skin and anti-aging protocols: 200–300 mcg daily' },
+      { step: 'For hair loss: 300–500 mcg near the scalp daily' },
+      { step: 'Recommended cycle: 4–8 weeks on, 2 weeks off' },
+    ],
+    warning: 'GHK-Cu is generally very well tolerated. Mild redness at the injection site is normal. Do not exceed 500 mcg per dose. Avoid use on active open wounds not intended for treatment.',
+  },
+  // ── VIALS ──
+  {
+    id: 10, type: 'vial',
+    img: 'NAD+ Vial.jpeg',
+    category: 'Nicotinamide Adenine Dinucleotide',
+    name: 'NAD+ Vial',
+    dose: '1000 mg · 2 ml Self-Mix Vial',
+    desc: 'Reconstitutable NAD+ for clinical and research protocols. Paired with 2 ml bacteriostatic water for precision-dose preparation.',
+    features: ['Mitochondrial energy production', 'Cellular & DNA repair', 'Cognitive and metabolic vitality'],
+    price: 1200,
+    handling: [
+      'Store lyophilised powder at room temperature or refrigerated (2–8 °C)',
+      'Once reconstituted, refrigerate immediately and use within 28 days',
+      'Do not freeze reconstituted solution',
+      'Protect from light at all times',
+      'Discard if solution appears cloudy or discoloured after reconstitution',
+    ],
+    reconstitution: [
+      'Draw 2 ml of bacteriostatic water into a syringe',
+      'Inject slowly down the inside wall of the vial — do not spray directly onto powder',
+      'Swirl gently until fully dissolved — do not shake or vortex',
+      'Final concentration: 500 mg/ml',
+      'Allow to sit for 2–3 minutes if powder does not dissolve immediately',
+    ],
+    dosage: [
+      { step: 'Loading phase (Days 1–7): 100–250 mg daily subcutaneous' },
+      { step: 'Maintenance: 50–100 mg daily subcutaneous' },
+      { step: 'Inject slowly — administer over 30–60 seconds to avoid flushing' },
+      { step: 'Best administered in the morning' },
+      { step: 'Cycle: 30–60 days, then reassess with practitioner' },
+    ],
+    warning: 'Inject slowly to minimise transient flushing or warmth at injection site. This is a normal response and resolves quickly.',
+  },
+  {
+    id: 11, type: 'vial',
+    img: 'Semaglutide vial.jpeg',
+    category: 'GLP-1 Receptor Agonist',
+    name: 'Semaglutide',
+    dose: '7 mg / 2 ml Self-Mix Vial',
+    desc: 'The benchmark GLP-1 for sustained fat loss, glycemic control, and appetite regulation. Weekly protocol, lyophilised for stability.',
+    features: ['Appetite suppression & satiety', 'Improved A1C & glucose control', 'Steady, sustainable fat loss'],
+    price: 1200,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 28 days',
+      'Do not freeze reconstituted solution',
+      'Protect from light — store in original vial box between doses',
+      'Discard if solution is cloudy or has particles after mixing',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water slowly down the vial wall',
+      'Swirl gently until fully dissolved — never shake',
+      'Final concentration: 3.5 mg/ml',
+      'Allow to rest for 2 minutes if needed',
+      'Visually inspect for clarity before drawing dose',
+    ],
+    dosage: [
+      { step: 'Week 1–4: 0.25 mg (0.07 ml) subcutaneous once weekly' },
+      { step: 'Week 5–8: 0.5 mg (0.14 ml) once weekly' },
+      { step: 'Week 9–12: 1.0 mg (0.28 ml) once weekly' },
+      { step: 'Maintenance: 1.7–2.4 mg once weekly (maximum dose)' },
+      { step: 'Inject in the abdomen, thigh, or upper arm — rotate sites' },
+      { step: 'Administer on the same day each week regardless of meals' },
+    ],
+    warning: 'Contraindicated in personal or family history of medullary thyroid carcinoma. Titrate slowly. Common side effects include nausea and reduced appetite — these typically subside.',
+  },
+  {
+    id: 12, type: 'vial',
+    img: 'tirzepatide-vial.jpeg',
+    category: 'GLP-1 / GIP Dual Agonist',
+    name: 'Tirzepatide',
+    dose: '32 mg Self-Mix Vial',
+    desc: 'Dual incretin signaling for superior fat loss and metabolic recomposition versus single-pathway GLP-1s.',
+    features: ['Dual GLP-1 + GIP action', 'Powerful appetite control', 'Enhanced insulin sensitivity'],
+    price: 1700,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 28 days',
+      'Do not freeze the reconstituted solution',
+      'Protect from light between uses',
+      'Discard vial after 28 days of reconstitution',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water slowly down the vial wall',
+      'Swirl gently until completely dissolved',
+      'Final concentration: 16 mg/ml',
+      'Inspect for clarity — solution should be colourless and clear',
+    ],
+    dosage: [
+      { step: 'Week 1–4: 2.5 mg (0.16 ml) subcutaneous once weekly' },
+      { step: 'Week 5–8: 5 mg (0.31 ml) once weekly' },
+      { step: 'Week 9–12: 7.5 mg (0.47 ml) once weekly' },
+      { step: 'Maintenance: 10–15 mg once weekly (maximum 15 mg/week)' },
+      { step: 'Inject in the abdomen, thigh, or upper arm — rotate sites weekly' },
+    ],
+    warning: 'Slow titration is essential to minimise gastrointestinal side effects. Contraindicated with personal/family history of thyroid C-cell tumours. Consult your practitioner before adjusting dose.',
+  },
+  {
+    id: 13, type: 'vial',
+    img: 'CJC-1295+Ipamorelin vial.jpeg',
+    category: 'GHRH + GHRP Synergy',
+    name: 'CJC-1295 + Ipamorelin',
+    dose: '10 mg · 5 mg CJC + 5 mg Ipa',
+    desc: 'A classic anti-aging GH-boosting stack. Pulsatile, physiological growth hormone release for recovery, sleep, and body composition.',
+    features: ['Natural pulsatile GH release', 'Improved recovery & sleep', 'Lean mass & fat oxidation'],
+    price: 600,
+    handling: [
+      'Store lyophilised powder at room temperature or refrigerated (2–8 °C)',
+      'Once reconstituted, refrigerate and use within 21 days',
+      'Do not freeze',
+      'Protect from light',
+      'Swirl gently before drawing each dose',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water slowly down the vial wall',
+      'Swirl gently until fully dissolved — never shake',
+      'Final concentration: 2.5 mg/ml (CJC) + 2.5 mg/ml (Ipamorelin)',
+      'Solution should be clear and colourless',
+    ],
+    dosage: [
+      { step: 'Standard dose: 100 mcg CJC-1295 + 100 mcg Ipamorelin (0.04 ml each) per injection' },
+      { step: 'Administer subcutaneously in the abdomen before bed or post-workout' },
+      { step: 'Frequency: 1–3 injections daily; bedtime dosing recommended for GH pulse alignment' },
+      { step: 'Protocol: 5 days on, 2 days off' },
+      { step: 'Recommended cycle: 8–12 weeks' },
+    ],
+    warning: 'Avoid eating 1–2 hours before and after injection — elevated insulin blunts the GH pulse. Monitor IGF-1 levels every 4–6 weeks on prolonged protocols.',
+  },
+  {
+    id: 14, type: 'vial',
+    img: 'Wolverine stack vial.jpeg',
+    category: 'TB-500 + BPC-157',
+    name: 'Wolverine Stack',
+    dose: '10 mg · 5 mg TB-500 + 5 mg BPC-157',
+    desc: 'The original Wolverine healing stack in a self-mix vial — full clinical flexibility for tendon, ligament, gut, and soft-tissue repair.',
+    features: ['Accelerated tissue regeneration', 'Gut and joint protection', 'Reduced systemic inflammation'],
+    price: 750,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 21 days',
+      'Do not freeze',
+      'Protect from light',
+      'Discard if solution appears cloudy after reconstitution',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water down the vial wall',
+      'Swirl gently until fully dissolved',
+      'Final concentration: 2.5 mg/ml each peptide (TB-500 + BPC-157)',
+      'Solution should appear clear to slightly off-white',
+    ],
+    dosage: [
+      { step: 'Acute injury loading: 500 mcg of each peptide subcutaneous or IM twice daily for 2 weeks' },
+      { step: 'Maintenance protocol: 250 mcg of each peptide daily' },
+      { step: 'Inject near the injury site or systemically in the abdomen' },
+      { step: 'Gut health protocol: 250 mcg daily subcutaneous for 4–6 weeks' },
+      { step: 'General recovery cycle: 4–8 weeks on, 4 weeks off' },
+    ],
+    warning: 'Avoid use during active cancer treatment. BPC-157 may promote cell growth — consult a practitioner if any malignancy risk is present.',
+  },
+  {
+    id: 15, type: 'vial',
+    img: 'Tesamorelin vial.jpeg',
+    category: 'GHRH Analog',
+    name: 'Tesamorelin',
+    dose: '30 mg Self-Mix Vial',
+    desc: 'A potent growth hormone-releasing hormone analog targeting visceral fat reduction, lipid optimisation, and metabolic recomposition.',
+    features: ['Reduces visceral adipose tissue', 'Stimulates endogenous GH', 'Improves lipid profile'],
+    price: 1650,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 21 days',
+      'Do not freeze reconstituted solution',
+      'Protect from light between uses',
+      'Discard unused reconstituted solution after 21 days',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water slowly down the vial wall',
+      'Swirl gently until fully dissolved',
+      'Final concentration: 15 mg/ml',
+      'Solution should be clear and colourless',
+    ],
+    dosage: [
+      { step: '1–2 mg subcutaneous injection once daily' },
+      { step: 'Administer preferably at bedtime on an empty stomach' },
+      { step: 'Inject in the abdomen — rotate sites daily' },
+      { step: 'Recommended cycle: 12–26 weeks' },
+      { step: 'Monitor IGF-1 and fasting glucose every 6–8 weeks' },
+    ],
+    warning: 'Contraindicated in active malignancy or history of pituitary-related disorders. May cause injection site reactions (redness, swelling) — rotate sites. Monitor for fluid retention.',
+  },
+  {
+    id: 16, type: 'vial',
+    img: 'MOTS-C vial.jpeg',
+    category: 'Mitochondrial Peptide',
+    name: 'MOTS-C Vial',
+    dose: '10 mg · 5000 mcg/ml Self-Mix Vial',
+    desc: 'Mitochondrial-derived peptide in a precision self-mix vial. Paired with 2 ml bacteriostatic water for clinical-grade reconstitution.',
+    features: ['Boosts mitochondrial output & energy', 'Improves insulin sensitivity', 'Endurance & cellular longevity'],
+    price: 550,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 21 days',
+      'Do not freeze',
+      'Protect from light and heat',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water down the vial wall',
+      'Swirl gently until fully dissolved',
+      'Final concentration: 5 mg/ml (5000 mcg/ml)',
+      'Solution should be clear and colourless',
+    ],
+    dosage: [
+      { step: 'Standard weekly dose: 5–10 mg total' },
+      { step: 'Split into 2–3 injections of 2–5 mg per week subcutaneous' },
+      { step: 'Inject in the abdomen or upper thigh' },
+      { step: 'Administer in the morning for best metabolic and energy effect' },
+      { step: 'Cycle: 4–12 weeks on, 4 weeks off' },
+    ],
+    warning: 'May potentiate the effects of insulin or glucose-lowering agents. Monitor blood glucose if diabetic or pre-diabetic. Consult a practitioner for personalised dosing.',
+  },
+  {
+    id: 17, type: 'vial',
+    img: 'Retatrutide vial.jpeg',
+    category: 'GLP-1 / GIP / Glucagon Tri-Agonist',
+    name: 'Retatrutide Vial',
+    dose: '32 mg · 2 ml Self-Mix Vial',
+    desc: 'The most advanced incretin tri-agonist in a flexible self-mix vial format. Engineered for aggressive fat loss and metabolic restoration.',
+    features: ['Triple-pathway metabolic action', 'Significant fat loss & appetite control', 'Improves glucose & cardiovascular markers'],
+    price: 1900,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 28 days',
+      'Do not freeze reconstituted solution',
+      'Protect from light — store in original box',
+      'Discard if solution is cloudy or contains particles',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water slowly down the vial wall',
+      'Swirl gently until fully dissolved — never shake',
+      'Final concentration: 16 mg/ml',
+      'Allow 2–3 minutes for complete dissolution',
+    ],
+    dosage: [
+      { step: 'Week 1–4: 2 mg subcutaneous injection once weekly' },
+      { step: 'Week 5–8: Increase to 4 mg once weekly if tolerated' },
+      { step: 'Week 9–12: Increase to 8 mg once weekly' },
+      { step: 'Maintenance: up to 12 mg once weekly (maximum dose)' },
+      { step: 'Rotate injection sites: abdomen, thigh, or upper arm' },
+    ],
+    warning: 'Contraindicated in personal/family history of medullary thyroid carcinoma or MEN2. Titrate slowly to manage GI side effects. Full effects typically observed at 8+ weeks.',
+  },
+  {
+    id: 24, type: 'vial',
+    img: 'Retirzepatide vial.jpeg',
+    category: 'Retatrutide + Tirzepatide Dual Stack',
+    name: 'Retirzepatide',
+    dose: '35 mg · 20 mg Retatrutide + 15 mg Tirzepatide',
+    desc: 'The most powerful incretin combination available — stacking the triple GLP-1/GIP/Glucagon tri-agonist Retatrutide with Tirzepatide\'s dual incretin action for maximum metabolic and fat-loss results.',
+    features: ['Dual + triple incretin synergy', 'Maximum fat loss & appetite control', 'Advanced glucose & metabolic recomposition'],
+    price: 2200,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 28 days',
+      'Do not freeze reconstituted solution',
+      'Protect from light at all times',
+      'Discard if solution appears cloudy or discoloured',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water slowly down the vial wall',
+      'Swirl gently — do not shake',
+      'Allow 2–5 minutes for complete dissolution',
+      'Solution should be clear to slightly off-white',
+    ],
+    dosage: [
+      { step: 'Start low to assess combined tolerance: 2–3 mg once weekly subcutaneous' },
+      { step: 'Titrate by 2 mg every 4 weeks based on response and tolerance' },
+      { step: 'Maintenance: 6–10 mg once weekly (under practitioner supervision)' },
+      { step: 'Rotate injection sites: abdomen, thigh, or upper arm' },
+      { step: 'Administer on the same day each week' },
+    ],
+    warning: 'This is a high-potency combination product. Begin at the lowest dose. Contraindicated with thyroid C-cell tumour history. GI side effects are more pronounced — titrate slowly. Medical supervision strongly advised.',
+  },
+  {
+    id: 18, type: 'vial',
+    img: 'GHK-Cu - vial.jpeg',
+    category: 'Copper Peptide · Regenerative',
+    name: 'GHK-CU',
+    dose: '60 mg · 2 ml Self-Mix Vial',
+    desc: 'A copper-bound tripeptide that drives collagen synthesis, skin remodeling, hair regrowth, and systemic tissue regeneration.',
+    features: ['Skin elasticity & collagen synthesis', 'Hair follicle stimulation', 'Wound healing & anti-inflammatory'],
+    price: 800,
+    handling: [
+      'Store lyophilised powder refrigerated at 2–8 °C',
+      'Once reconstituted, refrigerate and use within 28 days',
+      'Do not freeze',
+      'Protect from sunlight',
+      'Discard if solution is not clear after reconstitution',
+    ],
+    reconstitution: [
+      'Add 2 ml bacteriostatic water slowly down the vial wall',
+      'Swirl gently until fully dissolved',
+      'Final concentration: 30 mg/ml',
+      'Solution should be clear and slightly blue-tinted (normal for copper peptide)',
+    ],
+    dosage: [
+      { step: 'Standard dose: 200–500 mcg subcutaneous injection daily or every other day' },
+      { step: 'Inject near the target area (scalp, face) or systemically in the abdomen' },
+      { step: 'Skin remodeling protocol: 200–300 mcg daily for 4–8 weeks' },
+      { step: 'Hair regrowth protocol: 300–500 mcg near the scalp daily' },
+      { step: 'Cycle: 4–8 weeks on, 2 weeks off' },
+    ],
+    warning: 'GHK-Cu is generally very well tolerated. The slight blue tint of the solution is normal and due to the copper complex — this does not indicate contamination.',
+  },
+  // ── NASALS ──
+  {
+    id: 19, type: 'nasal',
+    img: 'GHK-Cu 50mg nasal.png',
+    category: 'Copper Peptide · Regenerative',
+    name: 'GHK-CU Nasal',
+    dose: '10 ml · 50 mg Nasal Spray',
+    desc: 'Daily needle-free regenerative protocol — nasal delivery of the GHK-Cu tripeptide for skin, hair, and systemic tissue support.',
+    features: ['Skin & hair regeneration', 'Anti-inflammatory support', 'Convenient, needle-free delivery'],
+    price: 700,
+    handling: [
+      'Store at room temperature away from direct sunlight',
+      'Do not refrigerate or freeze — spray nozzle may clog',
+      'Keep cap tightly closed when not in use',
+      'Once opened, use within 90 days',
+      'Keep out of reach of children',
+    ],
+    dosage: [
+      { step: 'Prime the bottle with 4–5 pumps before first use' },
+      { step: 'Standard dose: 1–2 sprays per nostril, 1–2 times daily' },
+      { step: 'Each spray delivers approximately 250 mcg' },
+      { step: 'Total daily dose: 0.5–1 mg' },
+      { step: 'Tilt head slightly forward, insert tip, spray while gently inhaling' },
+      { step: 'Recommended cycle: 8–12 weeks, then 4 weeks off' },
+    ],
+    warning: 'Nasal application may cause mild transient irritation on first use. This typically resolves within a few minutes. Discontinue if persistent nasal irritation or unusual symptoms occur.',
+  },
+  {
+    id: 20, type: 'nasal',
+    img: 'Wolverine Stack Nasal.jpeg',
+    category: 'TB-500 + BPC-157 Composite',
+    name: 'Wolverine Nasal',
+    dose: '10 ml · 2.5 mg / 2.5 mg Nasal Spray',
+    desc: 'Needle-free regenerative protocol — nasal delivery of the Wolverine healing complex for consistent, daily micro-dosing.',
+    features: ['Daily healing micro-doses', 'Joint, gut & tendon support', 'Convenient, needle-free delivery'],
+    price: 700,
+    handling: [
+      'Store at room temperature away from direct sunlight',
+      'Do not refrigerate or freeze',
+      'Keep cap tightly closed between uses',
+      'Once opened, use within 90 days',
+      'Shake gently before each use',
+    ],
+    dosage: [
+      { step: 'Prime the bottle with 4–5 pumps before first use' },
+      { step: 'Standard dose: 1–2 sprays per nostril, 2–3 times daily' },
+      { step: 'Each spray delivers approximately 125 mcg of each peptide' },
+      { step: 'Tilt head slightly forward, insert tip, spray while gently inhaling' },
+      { step: 'Consistency is key — administer at the same times daily' },
+      { step: 'Cycle: 4–8 weeks on, 2–4 weeks off' },
+    ],
+    warning: 'Avoid use during active cancer treatment. Not for use by pregnant or breastfeeding individuals. Mild nasal irritation on first use is normal.',
+  },
+  {
+    id: 21, type: 'nasal',
+    img: 'Semax Nasal.jpeg',
+    category: 'Nootropic / Neuroprotective Peptide',
+    name: 'Semax',
+    dose: '10 ml · 10 mg Nasal Spray',
+    desc: 'Russian-developed nootropic supporting BDNF expression, focus, memory, and neuroprotection under cognitive load.',
+    features: ['Sharper focus & memory', 'Elevated BDNF & neuroplasticity', 'Resilience under stress'],
+    price: 800,
+    handling: [
+      'Store refrigerated at 2–8 °C for long-term storage',
+      'May be kept at room temperature (up to 25 °C) for up to 30 days once in use',
+      'Protect from light — keep in original packaging',
+      'Once opened, use within 90 days',
+      'Keep cap tightly closed at all times',
+    ],
+    dosage: [
+      { step: 'Prime bottle with 4–5 pumps before first use' },
+      { step: 'Starting dose: 1 spray per nostril per session (approx. 100 mcg)' },
+      { step: 'Standard dose: 1–2 sprays per nostril, 1–3 sessions per day (200–900 mcg/day)' },
+      { step: 'Administer in the morning and early afternoon — avoid evening use' },
+      { step: 'Tilt head forward, insert tip, spray on gentle inhale' },
+      { step: 'Cycle: 2–4 weeks on, 1–2 weeks off' },
+    ],
+    warning: 'Avoid administration within 4 hours of sleep — may cause stimulation. Some users report mild tingling or headache on first use. Begin at the lowest dose and assess individual tolerance.',
+  },
+  {
+    id: 22, type: 'nasal',
+    img: 'Selank Nasal.jpeg',
+    category: 'Anxiolytic Neuropeptide',
+    name: 'Selank',
+    dose: '10 ml · 10 mg Nasal Spray',
+    desc: 'A calm, focused anxiolytic without sedation or dependence. Modulates GABA, serotonin, and stress-response pathways.',
+    features: ['Reduces anxiety & stress', 'Calm, sustained focus', 'Mood and immune support'],
+    price: 800,
+    handling: [
+      'Store refrigerated at 2–8 °C',
+      'Protect from light',
+      'Keep cap tightly closed between uses',
+      'Once opened, use within 90 days',
+      'Do not freeze',
+    ],
+    dosage: [
+      { step: 'Prime bottle with 4–5 pumps before first use' },
+      { step: 'Standard dose: 1–3 sprays per nostril per session (250–750 mcg)' },
+      { step: 'Administer 1–3 times daily as needed for anxiety or cognitive support' },
+      { step: 'Morning and early afternoon dosing preferred' },
+      { step: 'Do not administer within 4 hours of sleep' },
+      { step: 'Cycle: 2–4 weeks on, 1 week off' },
+    ],
+    warning: 'Selank is non-sedating and non-habit-forming at recommended doses. Avoid combining with sedative medications without practitioner approval. Do not exceed 3 sessions per day.',
+  },
+  {
+    id: 23, type: 'nasal',
+    img: 'Melanotan II Nasal.jpeg',
+    category: 'Melanocortin Agonist',
+    name: 'Melanotan II',
+    dose: '10 ml · 20 mg Nasal Spray',
+    desc: 'Stimulates natural melanogenesis for a deeper, longer-lasting tan with reduced UV exposure. Also supports libido and appetite modulation.',
+    features: ['Enhanced natural tanning', 'Reduced UV requirement', 'Libido & vitality support'],
+    price: 800,
+    handling: [
+      'Store refrigerated at 2–8 °C',
+      'Protect from light at all times',
+      'Keep cap tightly closed between uses',
+      'Once opened, use within 90 days',
+      'Do not freeze',
+    ],
+    dosage: [
+      { step: 'Prime bottle with 4–5 pumps before first use' },
+      { step: 'Loading phase (Week 1–2): 1 spray per nostril (approx. 1 mg) twice daily' },
+      { step: 'Maintenance: 1 spray per nostril every 2–3 days once desired pigmentation is achieved' },
+      { step: 'Administer 30–60 minutes before UV exposure or tanning session' },
+      { step: 'Tilt head forward, spray on gentle inhale' },
+      { step: 'Begin with minimal UV exposure and increase gradually' },
+    ],
+    warning: 'May cause facial flushing, nausea, or spontaneous erection in men — these are known pharmacological effects. Reduce dose if side effects are significant. Monitor existing moles for any changes. Not for use in individuals with melanoma or high skin cancer risk.',
+  },
+];
+
+// ── CART STATE ──
+let cart = [];
+
+function formatPrice(p) {
+  return `<sup>R</sup>${p.toLocaleString('en-ZA')}<sub>ZAR</sub>`;
+}
+
+// ── RENDER PRODUCTS ──
+const typeConfig = {
+  pen:   { label: 'PRE-FILLED PENS',  title: 'Pre-Filled Pens'  },
+  vial:  { label: 'SELF-MIX VIALS',   title: 'Self-Mix Vials'   },
+  nasal: { label: 'NASAL SPRAYS',     title: 'Nasal Sprays'     },
+};
+
+function renderProducts(filter = 'all') {
+  const grid = document.getElementById('productGrid');
+  const list = filter === 'all' ? products : products.filter(p => p.type === filter);
+
+  let html = '';
+  let lastType = null;
+
+  list.forEach(p => {
+    if (filter === 'all' && p.type !== lastType) {
+      const count = products.filter(x => x.type === p.type).length;
+      const cfg = typeConfig[p.type];
+      html += `
+        <div class="cat-divider" style="grid-column:1/-1;padding:40px 0 16px;border-top:1px solid var(--border);margin-top:8px;">
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--cyan);text-transform:uppercase;">${cfg.label}</span>
+            <span style="font-size:12px;color:var(--muted);">${count} products</span>
+          </div>
+          <h3 style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;color:var(--white);margin-top:4px;">${cfg.title}</h3>
+        </div>`;
+      lastType = p.type;
+    }
+
+    html += `
+      <div class="product-card" onclick="openPamphlet(${p.id})" style="cursor:pointer;">
+        <div class="product-img">
+          <img src="${p.img}" alt="${p.name}" onerror="this.style.opacity='0'">
+          <div class="prod-badges">
+            <span class="badge badge-${p.type}">${p.type.toUpperCase()}</span>
+            <span class="badge badge-rx">RX</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="prod-category">${p.category}</div>
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-dose">${p.dose}</div>
+          <p class="prod-desc">${p.desc}</p>
+          <ul class="prod-features">
+            ${p.features.map(f => `<li>${f}</li>`).join('')}
+          </ul>
+          <div class="prod-footer">
+            <div class="prod-price">${formatPrice(p.price)}</div>
+            <button class="btn-add" onclick="event.stopPropagation(); addToCart(${p.id})">+ ADD</button>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  grid.innerHTML = html;
+}
+
+function filterProducts(e, type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderProducts(type);
+}
+
+// ── CART ──
+function toggleCart() {
+  const drawer = document.getElementById('cartDrawer');
+  const backdrop = document.getElementById('cartBackdrop');
+  drawer.classList.toggle('open');
+  backdrop.classList.toggle('open');
+}
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+  const existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  updateCartUI();
+  // Flash the cart button
+  const btn = document.querySelector('.btn-cart');
+  btn.style.color = 'var(--cyan)';
+  setTimeout(() => btn.style.color = '', 600);
+  showCartToast(product);
+}
+
+// ── ADDED-TO-CART TOAST ──
+let _cartToastTimer = null;
+function showCartToast(product) {
+  let toast = document.getElementById('cartToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'cartToast';
+    toast.style.cssText = 'position:fixed;top:80px;right:24px;z-index:12000;display:flex;align-items:center;gap:14px;' +
+      'background:var(--card);border:1px solid rgba(45,184,216,0.4);border-left:3px solid var(--cyan);' +
+      'padding:14px 18px;max-width:320px;box-shadow:0 16px 48px rgba(0,0,0,0.5);' +
+      'transform:translateX(140%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML =
+    '<div style="width:34px;height:34px;border-radius:50%;background:rgba(45,184,216,0.14);border:1px solid rgba(45,184,216,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2db8d8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+    '</div>' +
+    '<div style="min-width:0;">' +
+      '<div style="font-family:\'Space Mono\',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:3px;">Added to cart</div>' +
+      '<div style="font-family:\'Cormorant Garamond\',serif;font-size:18px;color:var(--white);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + product.name + '</div>' +
+    '</div>';
+  // slide in
+  requestAnimationFrame(() => { toast.style.transform = 'translateX(0)'; });
+  clearTimeout(_cartToastTimer);
+  _cartToastTimer = setTimeout(() => { toast.style.transform = 'translateX(140%)'; }, 2400);
+  toast.onclick = () => toggleCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent = count;
+
+  const itemsEl = document.getElementById('cartItems');
+  const footerEl = document.getElementById('cartFooter');
+  const totalEl  = document.getElementById('cartTotal');
+
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<div class="cart-empty">Your cart is empty.</div>';
+    footerEl.style.display = 'none';
+    return;
+  }
+
+  footerEl.style.display = 'block';
+  const subtotal  = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery  = subtotal >= 3000 ? 0 : 100;
+  const grandTotal = subtotal + delivery;
+
+  document.getElementById('cartSubtotal').textContent = `R${subtotal.toLocaleString()}`;
+  const deliveryEl = document.getElementById('cartDelivery');
+  if (delivery === 0) {
+    deliveryEl.innerHTML = '<span style="color:var(--cyan);font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:0.12em;">FREE</span>';
+  } else {
+    deliveryEl.textContent = 'R100';
+    deliveryEl.style.color = '';
+  }
+  totalEl.innerHTML = formatPrice(grandTotal);
+
+  itemsEl.innerHTML = cart.map(i => `
+    <div class="cart-item">
+      <img src="${i.img}" alt="${i.name}" class="cart-item-img" onerror="this.style.background='var(--deep)'">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${i.name}</div>
+        <div class="cart-item-dose">${i.dose}</div>
+        <div class="cart-item-price">${formatPrice(i.price)}</div>
+      </div>
+      <div class="cart-item-qty">
+        <button onclick="changeQty(${i.id},-1)">−</button>
+        <span>${i.qty}</span>
+        <button onclick="changeQty(${i.id},1)">+</button>
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart(${i.id})">×</button>
+    </div>`).join('');
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+// ── CONTACT MODAL ──
+// ── CONTACT FORM ──
+function sendContactForm() {
+  // Replace these with your EmailJS Service ID and Template ID
+  const SERVICE_ID  = 'service_gj0lqqm';
+  const TEMPLATE_ID = 'template_ovfa5zs';
+
+  const firstname = document.getElementById('cf-firstname').value.trim();
+  const lastname  = document.getElementById('cf-lastname').value.trim();
+  const email     = document.getElementById('cf-email').value.trim();
+  const phone     = document.getElementById('cf-phone').value.trim();
+  const subject   = document.getElementById('cf-subject').value.trim();
+  const message   = document.getElementById('cf-message').value.trim();
+  const status    = document.getElementById('cf-status');
+  const btn       = document.getElementById('cf-submit');
+
+  if (!firstname || !email || !message) {
+    showFormStatus('Please fill in your first name, email, and message.', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'SENDING…';
+
+  const templateParams = {
+    from_name:  `${firstname} ${lastname}`.trim(),
+    from_email: email,
+    phone:      phone || '—',
+    subject:    subject || 'NGE Website Enquiry',
+    message:    message,
+    to_email:   'sales@nextgenevolution.co.za',
+  };
+
+  emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+    .then(() => {
+      showFormStatus('Message sent! We\'ll be in touch shortly.', 'success');
+      btn.textContent = 'SENT ✓';
+      // Clear fields
+      ['cf-firstname','cf-lastname','cf-email','cf-phone','cf-subject','cf-message']
+        .forEach(id => { document.getElementById(id).value = ''; });
+      setTimeout(() => { btn.disabled = false; btn.textContent = 'SEND MESSAGE'; }, 4000);
+    })
+    .catch(err => {
+      console.error('EmailJS error:', err);
+      showFormStatus('Something went wrong. Please try again or email us directly.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'SEND MESSAGE';
+    });
+}
+
+function showFormStatus(msg, type) {
+  const el = document.getElementById('cf-status');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = type === 'success' ? 'rgba(45,184,216,0.12)' : 'rgba(220,60,60,0.12)';
+  el.style.color       = type === 'success' ? 'var(--cyan)' : '#e07070';
+  el.style.border      = type === 'success' ? '1px solid rgba(45,184,216,0.3)' : '1px solid rgba(220,60,60,0.3)';
+}
+
+// ── CHECKOUT ──
+// ── OPEN CHECKOUT MODAL ──
+function checkoutPayfast() {
+  if (cart.length === 0) return;
+
+  // Populate order summary inside the modal
+  const subtotal  = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery  = subtotal >= 3000 ? 0 : 100;
+  const grandTotal = subtotal + delivery;
+  const lines = cart.map(i =>
+    `<div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="color:var(--white)">${i.name} <span style="color:var(--muted)">x${i.qty}</span></span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:15px;">R${(i.price * i.qty).toLocaleString()}</span>
+    </div>`
+  ).join('');
+  const deliveryLabel = delivery === 0
+    ? `<span style="color:var(--cyan);font-size:11px;font-family:'Space Mono',monospace;letter-spacing:0.1em;">FREE</span>`
+    : `<span style="font-family:'Cormorant Garamond',serif;font-size:15px;">R100</span>`;
+  document.getElementById('co-summary').innerHTML = `
+    ${lines}
+    <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--muted);">DELIVERY</span>
+        ${deliveryLabel}
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--muted);">TOTAL</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:22px;">R${grandTotal.toLocaleString()} <span style="font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);">ZAR</span></span>
+      </div>
+    </div>`;
+
+  document.getElementById('checkoutModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCheckoutModal() {
+  document.getElementById('checkoutModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('checkoutModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCheckoutModal();
+  });
+});
+
+// ── VALIDATE & EMAIL ORDER ──
+function submitCheckout() {
+  const get = id => document.getElementById(id).value.trim();
+
+  const firstname = get('co-firstname');
+  const lastname  = get('co-lastname');
+  const email     = get('co-email');
+  const phone     = get('co-phone');
+  const address   = get('co-address');
+  const city      = get('co-city');
+  const province  = get('co-province');
+  const postal    = get('co-postal');
+  const notes     = get('co-notes');
+
+  if (!firstname || !lastname || !email || !phone || !address || !city || !province || !postal) {
+    showCoStatus('Please fill in all required fields.', 'error');
+    return;
+  }
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!emailOk) { showCoStatus('Please enter a valid email address.', 'error'); return; }
+
+  if (cart.length === 0) { showCoStatus('Your cart is empty.', 'error'); return; }
+
+  const btn = document.getElementById('co-submit');
+  btn.disabled = true;
+  btn.textContent = 'SENDING ORDER…';
+  showCoStatus('Sending your order…', 'info');
+
+  // Send only the raw order to the backend — the invoice number + PDF are
+  // generated server-side (Netlify Function) and emailed to NGE in the background.
+  const customer = { firstname, lastname, email, phone, address, city, province, postal, notes };
+  const items = cart.map((i) => ({
+    id: i.id, name: i.name, type: i.type, dose: i.dose,
+    category: i.category, desc: i.desc, price: i.price, qty: i.qty,
+  }));
+
+  const finish = (previewOnly) => {
+    closeCheckoutModal();
+    cart = [];
+    updateCartUI();
+    const drawer = document.getElementById('cartDrawer');
+    if (drawer && drawer.classList.contains('open')) toggleCart();
+    document.getElementById('co-status').style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = 'PLACE ORDER';
+    showOrderSuccess(previewOnly);
+  };
+
+  fetch('/.netlify/functions/send-order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customer, items }),
+  })
+    .then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error((data && data.error) || ('HTTP ' + res.status));
+      finish(false);
+    })
+    .catch((err) => {
+      console.error('Order submit error:', err);
+      // Local preview has no serverless runtime — allow the UX to be tested without sending.
+      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+        console.warn('[preview] Order function not available locally — showing success popup for UX testing only. No email sent.');
+        finish(true);
+        return;
+      }
+      showCoStatus("Sorry — we couldn't submit your order right now. Please try again, or email sales@nextgenevolution.co.za directly.", 'error');
+      btn.disabled = false;
+      btn.textContent = 'PLACE ORDER';
+    });
+}
+
+function showCoStatus(msg, type) {
+  const el = document.getElementById('co-status');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = type === 'error' ? 'rgba(220,60,60,0.12)' : 'rgba(45,184,216,0.12)';
+  el.style.color       = type === 'error' ? '#e07070' : 'var(--cyan)';
+  el.style.border      = type === 'error' ? '1px solid rgba(220,60,60,0.3)' : '1px solid rgba(45,184,216,0.3)';
+}
+
+// ── UNIQUE INVOICE NUMBER ──
+function makeInvoiceNumber() {
+  const d = new Date();
+  const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+  const rnd = (Date.now().toString(36) + Math.random().toString(36).slice(2, 5)).slice(-5).toUpperCase();
+  return `INV-${ymd}-${rnd}`;
+}
+
+// ── LOGO LOADER FOR PDF (downscaled + cached to keep the PDF small) ──
+let _ngeLogoData = null;
+function loadLogoForPdf() {
+  if (_ngeLogoData) return Promise.resolve(_ngeLogoData);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function () {
+      try {
+        const MAX = 200; // downscale so the embedded logo stays a few KB, not megabytes
+        const scale = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.round(img.naturalWidth * scale);
+        const h = Math.round(img.naturalHeight * scale);
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, w, h);
+        _ngeLogoData = c.toDataURL('image/png');
+        resolve(_ngeLogoData);
+      } catch (err) { reject(err); }
+    };
+    img.onerror = reject;
+    img.src = 'NGE Transparent logo.png';
+  });
+}
+
+// ── GENERATE BRANDED INVOICE PDF ──
+async function generateInvoicePDF(orderItems, customer, invoiceNo) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  const cyan = [45, 184, 216], navyBg = [4, 12, 24], dark = [28, 38, 52], gray = [110, 130, 160], line = [225, 230, 238];
+  const L = 14, R = W - 14;
+
+  // Header band
+  doc.setFillColor(navyBg[0], navyBg[1], navyBg[2]); doc.rect(0, 0, W, 40, 'F');
+  try { const logo = await loadLogoForPdf(); doc.addImage(logo, 'PNG', L, 8, 24, 24); } catch (e) {}
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(17);
+  doc.text('NEXT GEN EVOLUTION', L + 28, 17);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(cyan[0], cyan[1], cyan[2]);
+  doc.text('SCIENCE · STRENGTH · TRANSFORMATION', L + 28, 22);
+  doc.setTextColor(185, 198, 218); doc.setFontSize(8);
+  doc.text('sales@nextgenevolution.co.za', L + 28, 28);
+  doc.text('www.nextgenevolution.co.za', L + 28, 32.5);
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(22);
+  doc.text('INVOICE', R, 18, { align: 'right' });
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(cyan[0], cyan[1], cyan[2]);
+  doc.text(invoiceNo, R, 25, { align: 'right' });
+
+  // Bill-to + invoice meta
+  let y = 52;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
+  doc.setTextColor(gray[0], gray[1], gray[2]); doc.setFontSize(8.5); doc.setFont('helvetica', 'bold');
+  doc.text('BILL TO', L, y);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(dark[0], dark[1], dark[2]); doc.setFontSize(10);
+  let by = y + 6;
+  doc.setFont('helvetica', 'bold'); doc.text(`${customer.firstname} ${customer.lastname}`, L, by); by += 5;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(gray[0], gray[1], gray[2]);
+  doc.text(customer.email, L, by); by += 4.5;
+  doc.text(customer.phone, L, by); by += 4.5;
+  doc.text(customer.address, L, by); by += 4.5;
+  doc.text(`${customer.city}, ${customer.province}, ${customer.postal}`, L, by); by += 4.5;
+  if (customer.notes) { doc.text(`Notes: ${customer.notes}`, L, by); by += 4.5; }
+
+  let ry = y; const rx = R - 60;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(gray[0], gray[1], gray[2]);
+  doc.text('INVOICE DETAILS', rx, ry); ry += 6;
+  doc.setFontSize(9);
+  const kv = (k, v) => { doc.setFont('helvetica', 'normal'); doc.setTextColor(gray[0], gray[1], gray[2]); doc.text(k, rx, ry); doc.setTextColor(dark[0], dark[1], dark[2]); doc.setFont('helvetica', 'bold'); doc.text(v, R, ry, { align: 'right' }); ry += 5; };
+  kv('Invoice No.', invoiceNo);
+  kv('Date', dateStr);
+  kv('Reference', invoiceNo);
+  kv('Status', 'AWAITING PAYMENT');
+
+  y = Math.max(by, ry) + 6;
+
+  // Items table header
+  doc.setFillColor(cyan[0], cyan[1], cyan[2]); doc.rect(L, y, R - L, 8, 'F');
+  doc.setTextColor(navyBg[0], navyBg[1], navyBg[2]); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+  doc.text('DESCRIPTION', L + 2, y + 5.5);
+  doc.text('QTY', 130, y + 5.5, { align: 'center' });
+  doc.text('UNIT', 162, y + 5.5, { align: 'right' });
+  doc.text('AMOUNT', R - 2, y + 5.5, { align: 'right' });
+  y += 8;
+
+  let subtotal = 0;
+  orderItems.forEach((i, idx) => {
+    const lineTotal = i.price * i.qty; subtotal += lineTotal;
+    const rowH = 11;
+    if (idx % 2 === 0) { doc.setFillColor(247, 249, 251); doc.rect(L, y, R - L, rowH, 'F'); }
+    doc.setTextColor(dark[0], dark[1], dark[2]); doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5);
+    doc.text(i.name, L + 2, y + 4.5);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(gray[0], gray[1], gray[2]);
+    doc.text(`${(i.type || '').toUpperCase()} · ${i.dose || ''}`, L + 2, y + 8.5);
+    doc.setTextColor(dark[0], dark[1], dark[2]); doc.setFontSize(9.5);
+    doc.text(String(i.qty), 130, y + 6.5, { align: 'center' });
+    doc.text('R' + i.price.toLocaleString(), 162, y + 6.5, { align: 'right' });
+    doc.setFont('helvetica', 'bold');
+    doc.text('R' + lineTotal.toLocaleString(), R - 2, y + 6.5, { align: 'right' });
+    y += rowH;
+    doc.setDrawColor(line[0], line[1], line[2]); doc.line(L, y, R, y);
+  });
+
+  // Totals
+  const delivery = customer.delivery !== undefined ? customer.delivery : (subtotal >= 3000 ? 0 : 100);
+  const grand = customer.grandTotal !== undefined ? customer.grandTotal : subtotal + delivery;
+  y += 7; const tx = R - 70;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(gray[0], gray[1], gray[2]);
+  doc.text('Subtotal', tx, y); doc.setTextColor(dark[0], dark[1], dark[2]); doc.text('R' + subtotal.toLocaleString(), R - 2, y, { align: 'right' }); y += 6;
+  doc.setTextColor(gray[0], gray[1], gray[2]); doc.text('Delivery', tx, y); doc.setTextColor(dark[0], dark[1], dark[2]);
+  doc.text(delivery === 0 ? 'FREE' : 'R' + delivery.toLocaleString(), R - 2, y, { align: 'right' }); y += 4;
+  doc.setDrawColor(cyan[0], cyan[1], cyan[2]); doc.setLineWidth(0.5); doc.line(tx, y, R - 2, y); y += 6;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(navyBg[0], navyBg[1], navyBg[2]);
+  doc.text('TOTAL DUE', tx, y); doc.setTextColor(cyan[0], cyan[1], cyan[2]); doc.text('R' + grand.toLocaleString() + ' ZAR', R - 2, y, { align: 'right' });
+  doc.setLineWidth(0.2);
+
+  // Banking details box
+  y += 12;
+  doc.setFillColor(247, 249, 251); doc.setDrawColor(cyan[0], cyan[1], cyan[2]);
+  doc.rect(L, y, R - L, 36, 'FD');
+  doc.setTextColor(cyan[0], cyan[1], cyan[2]); doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+  doc.text('BANKING DETAILS', L + 4, y + 7);
+  doc.setFontSize(9);
+  let byy = y + 14; const bx = L + 4;
+  const bank = (k, v) => { doc.setTextColor(gray[0], gray[1], gray[2]); doc.setFont('helvetica', 'normal'); doc.text(k, bx, byy); doc.setTextColor(dark[0], dark[1], dark[2]); doc.setFont('helvetica', 'bold'); doc.text(v, bx + 34, byy); byy += 5.5; };
+  bank('Bank', 'FNB');
+  bank('Account Name', 'Next Gen Evolution (Pty) Ltd');
+  bank('Account Number', '63150208940');
+  bank('Branch Code', '250655');
+  // Payment reference highlight
+  doc.setTextColor(gray[0], gray[1], gray[2]); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+  doc.text('USE THIS PAYMENT REFERENCE', bx + 95, y + 9);
+  doc.setTextColor(cyan[0], cyan[1], cyan[2]); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+  doc.text(invoiceNo, bx + 95, y + 16);
+  doc.setFontSize(7.5); doc.setTextColor(gray[0], gray[1], gray[2]); doc.setFont('helvetica', 'normal');
+  doc.text('Please quote this reference on your EFT', bx + 95, y + 23);
+  doc.text('so we can match your payment to this order.', bx + 95, y + 27);
+
+  // Footer
+  const fy = 285;
+  doc.setDrawColor(line[0], line[1], line[2]); doc.line(L, fy - 6, R, fy - 6);
+  doc.setTextColor(gray[0], gray[1], gray[2]); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
+  doc.text('For research use only · Not for human consumption without medical supervision.', L, fy);
+  doc.text('Thank you — Next Gen Evolution', R, fy, { align: 'right' });
+
+  const base64 = doc.output('datauristring').split(',')[1];
+  return { doc, base64, invoiceNo };
+}
+
+// ── ORDER REQUEST EMAIL (sent to NGE on checkout) ──
+function sendOrderEmail(orderItems, customer, pdfBase64, invoiceNo) {
+  const SERVICE_ID  = 'service_gj0lqqm';
+  const TEMPLATE_ID = 'template_ovfa5zs';
+
+  invoiceNo = invoiceNo || customer.invoiceNo || makeInvoiceNumber();
+  const subtotal  = orderItems.reduce((s, i) => s + i.price * i.qty, 0);
+  const sep       = '─'.repeat(44);
+
+  const delivery   = customer.delivery !== undefined ? customer.delivery : (subtotal >= 3000 ? 0 : 100);
+  const grandTotal = customer.grandTotal !== undefined ? customer.grandTotal : subtotal + delivery;
+  const deliveryLine = delivery === 0 ? 'Delivery:   FREE (order over R3,000)' : 'Delivery:   R100';
+
+  const itemLines = orderItems.map((i, n) => [
+    `${n + 1}. ${i.name}  (x${i.qty})  —  R${(i.price * i.qty).toLocaleString()}`,
+    `   Form: ${(i.type || '').toUpperCase()}   |   Dose: ${i.dose || '—'}`,
+    i.category ? `   Category: ${i.category}` : '',
+    i.desc ? `   ${i.desc}` : '',
+  ].filter(Boolean).join('\n')).join('\n\n');
+
+  const message = [
+    `🛒 NEW ORDER — INVOICE ${invoiceNo}`,
+    `Date: ${new Date().toLocaleString('en-ZA', { dateStyle:'full', timeStyle:'short' })}`,
+    `Order Ref: ${customer.orderRef || invoiceNo}`,
+    ``,
+    sep,
+    `CUSTOMER DETAILS`,
+    sep,
+    `Name:     ${customer.firstname} ${customer.lastname}`,
+    `Email:    ${customer.email}`,
+    `Phone:    ${customer.phone}`,
+    ``,
+    `DELIVERY ADDRESS`,
+    `${customer.address}`,
+    `${customer.city}, ${customer.province}, ${customer.postal}`,
+    customer.notes ? `Notes: ${customer.notes}` : '',
+    ``,
+    sep,
+    `ORDER ITEMS`,
+    sep,
+    itemLines,
+    ``,
+    sep,
+    `Subtotal:   R${subtotal.toLocaleString()}`,
+    `${deliveryLine}`,
+    `TOTAL DUE:  R${grandTotal.toLocaleString()} ZAR`,
+    sep,
+    ``,
+    `BANKING DETAILS`,
+    `Bank:            FNB`,
+    `Account Name:    Next Gen Evolution (Pty) Ltd`,
+    `Account Number:  63150208940`,
+    `Branch Code:     250655`,
+    `Payment Ref:     ${invoiceNo}`,
+    ``,
+    pdfBase64 ? `📎 PDF invoice attached: ${invoiceNo}.pdf` : `⚠ PDF invoice could not be attached — reference: ${invoiceNo}`,
+  ].filter(l => l !== null).join('\n');
+
+  const params = {
+    from_name:  `${customer.firstname} ${customer.lastname}`,
+    from_email: customer.email,
+    phone:      customer.phone,
+    subject:    `🛒 New Order ${invoiceNo} — R${grandTotal.toLocaleString()} ZAR`,
+    message,
+    to_email:   'sales@nextgenevolution.co.za',
+    invoice_no: invoiceNo,
+  };
+  if (pdfBase64) {
+    params.invoice_pdf = pdfBase64;
+    params.invoice_filename = invoiceNo + '.pdf';
+  }
+  return emailjs.send(SERVICE_ID, TEMPLATE_ID, params);
+}
+
+// ── ORDER SUCCESS POPUP ──
+function showOrderSuccess(previewOnly) {
+  const existing = document.getElementById('orderSuccessOverlay');
+  if (existing) existing.remove();
+  const previewNote = previewOnly
+    ? `<div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;color:var(--muted);opacity:0.6;margin-top:18px;">PREVIEW MODE · NO EMAIL SENT (LOCAL TEST)</div>`
+    : '';
+  const o = document.createElement('div');
+  o.id = 'orderSuccessOverlay';
+  o.style.cssText = 'position:fixed;inset:0;z-index:11000;background:rgba(2,6,14,0.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px;';
+  o.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border2);max-width:460px;width:100%;padding:48px 36px;text-align:center;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.6);">
+      <div style="width:66px;height:66px;border-radius:50%;background:rgba(45,184,216,0.12);border:1px solid rgba(45,184,216,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2db8d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:500;line-height:1.15;margin-bottom:14px;color:var(--white);">Thank you — checkout successful</h3>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;">You will receive your invoice on email shortly.</p>
+      <button onclick="this.closest('#orderSuccessOverlay').remove();document.body.style.overflow='';"
+        style="background:var(--cyan);color:var(--black);border:none;padding:13px 42px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Done</button>
+      ${previewNote}
+    </div>`;
+  o.addEventListener('click', e => { if (e.target === o) { o.remove(); document.body.style.overflow = ''; } });
+  document.body.appendChild(o);
+  document.body.style.overflow = 'hidden';
+}
+
+// ── PRODUCT PAMPHLET ──
+function openPamphlet(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('pm-img').src = p.img;
+  document.getElementById('pm-img').alt = p.name;
+  document.getElementById('pm-category').textContent = p.category;
+  document.getElementById('pm-name').textContent = p.name;
+  document.getElementById('pm-dose').textContent = p.dose;
+
+  // Tags
+  const tagColors = { pen: 'badge-pen', vial: 'badge-vial', nasal: 'badge-nasal' };
+  document.getElementById('pm-tags').innerHTML = `
+    <span class="badge pamphlet-tag ${tagColors[p.type]}">${p.type.toUpperCase()}</span>
+    <span class="badge pamphlet-tag badge-rx">RX</span>`;
+
+  // Build body sections
+  let body = '';
+
+  // Handling
+  body += `
+    <div class="pamphlet-section">
+      <div class="pamphlet-section-title">Storage &amp; Handling</div>
+      <ul class="pamphlet-list">
+        ${p.handling.map(h => `<li>${h}</li>`).join('')}
+      </ul>
+    </div>`;
+
+  // Reconstitution (vials only)
+  if (p.reconstitution) {
+    body += `
+    <div class="pamphlet-section">
+      <div class="pamphlet-section-title">Reconstitution</div>
+      <div class="pamphlet-dosage-steps">
+        ${p.reconstitution.map((s, i) => `
+          <div class="pamphlet-step">
+            <div class="pamphlet-step-num">${i + 1}</div>
+            <div class="pamphlet-step-text">${s}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Dosage
+  const dosageClass = p.reconstitution ? 'pamphlet-section-full' : 'pamphlet-section';
+  body += `
+    <div class="${dosageClass}">
+      <div class="pamphlet-section-title">Recommended Dosage Protocol</div>
+      <div class="pamphlet-dosage-steps">
+        ${p.dosage.map((d, i) => `
+          <div class="pamphlet-step">
+            <div class="pamphlet-step-num">${i + 1}</div>
+            <div class="pamphlet-step-text">${d.step}</div>
+          </div>`).join('')}
+      </div>
+      ${p.warning ? `<div class="pamphlet-warning">⚠ ${p.warning}</div>` : ''}
+    </div>`;
+
+  document.getElementById('pm-body').innerHTML = body;
+
+  // Wire up Add to Cart button
+  document.getElementById('pm-add-btn').onclick = () => {
+    addToCart(p.id);
+    closePamphlet();
+  };
+
+  document.getElementById('pamphletModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePamphlet() {
+  document.getElementById('pamphletModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('pamphletModal').addEventListener('click', function(e) {
+    if (e.target === this) closePamphlet();
+  });
+});
+
+function openReturns(e) {
+  if (e) e.preventDefault();
+  document.getElementById('returnsModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeReturns() {
+  document.getElementById('returnsModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('returnsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeReturns();
+  });
+});
+
+function openShipping(e) {
+  if (e) e.preventDefault();
+  document.getElementById('shippingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeShipping() {
+  document.getElementById('shippingModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('shippingModal').addEventListener('click', function(e) {
+    if (e.target === this) closeShipping();
+  });
+});
+
+function openContact(e) {
+  if (e) e.preventDefault();
+  document.getElementById('contactModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeContact() {
+  document.getElementById('contactModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('contactModal').addEventListener('click', function(e) {
+  if (e.target === this) closeContact();
+});
+
+// ── MARQUEE ──
+function initMarquee() {
+  const compounds = [
+    'Xenotropin','Retatrutide','Tirzepatide','Semaglutide','Tesamorelin',
+    'BPC-157','TB-500','CJC-1295','Ipamorelin','MOTS-C','NAD+','GHK-Cu',
+    'Kisspeptin-10','Semax','Selank','Melanotan II','Delta Recover','Wolverine',
+    'Retirzepatide','DSIP'
+  ];
+  const track = document.getElementById('marqueeTrack');
+  const items = [...compounds, ...compounds].map(c =>
+    `<span class="marquee-item">${c}</span><span class="marquee-sep">·</span>`
+  ).join('');
+  track.innerHTML = items;
+}
+
+// ── INIT ──
+renderProducts('all');
+initMarquee();
+</script>
+</body>
+</html>

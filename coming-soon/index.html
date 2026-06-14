@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Next Gen Evolution — Coming Soon</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#040c18; --deep:#071525; --white:#f4f6fb;
+  --muted:#6b87aa; --cyan:#2db8d8; --cyan-bright:#4dd4f0;
+  --border:rgba(45,184,216,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  background:var(--black); color:var(--white);
+  font-family:'Inter',sans-serif;
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:32px; overflow:hidden; position:relative;
+  background-image:
+    linear-gradient(rgba(45,184,216,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(45,184,216,0.05) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+body::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 60% at 50% 40%,rgba(20,80,180,0.28) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 50% at 50% 80%,rgba(10,40,90,0.35) 0%,transparent 60%);
+}
+.wrap{position:relative; z-index:1; max-width:620px;}
+.pill{
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:'Space Mono',monospace; font-size:10px;
+  letter-spacing:0.2em; text-transform:uppercase; color:var(--cyan);
+  border:1px solid rgba(45,184,216,0.35); background:rgba(45,184,216,0.07);
+  padding:8px 18px; border-radius:50px; margin-bottom:40px;
+}
+.pill::before{
+  content:''; width:7px; height:7px; border-radius:50%;
+  background:var(--cyan); box-shadow:0 0 10px var(--cyan);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.logo-img{
+  width:100%; max-width:220px; height:auto; display:block;
+  margin:-28px auto -18px;
+  filter:
+    drop-shadow(0 0 36px rgba(45,184,216,0.45))
+    drop-shadow(0 0 80px rgba(45,184,216,0.2));
+}
+h1{
+  font-family:'Cormorant Garamond',serif; font-weight:400;
+  font-size:clamp(52px,9vw,96px); line-height:1.02;
+  letter-spacing:-0.02em; margin-bottom:24px;
+}
+h1 em{font-style:italic; color:var(--cyan-bright); display:block;}
+p.sub{
+  font-size:15px; font-weight:300; color:var(--muted);
+  line-height:1.85; max-width:440px; margin:0 auto 44px;
+}
+.divider{
+  width:60px; height:1px; background:var(--border);
+  margin:0 auto 36px;
+}
+.contact{
+  font-family:'Space Mono',monospace; font-size:11px;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--muted);
+}
+.contact a{
+  color:var(--cyan); text-decoration:none;
+  border-bottom:1px solid rgba(45,184,216,0.35);
+  padding-bottom:2px; transition:color 0.2s;
+}
+.contact a:hover{color:var(--cyan-bright);}
+.foot{
+  position:absolute; bottom:28px; left:0; right:0;
+  font-family:'Space Mono',monospace; font-size:10px;
+  letter-spacing:0.1em; color:rgba(107,135,170,0.55);
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="pill">Site Under Maintenance</div>
+    <img src="NGE Transparent logo.png" alt="Next Gen Evolution" class="logo-img">
+    <h1>Something new<br><em>is coming.</em></h1>
+    <div class="divider"></div>
+    <div class="contact">Enquiries · <a href="mailto:sales@nextgenevolution.co.za">sales@nextgenevolution.co.za</a></div>
+  </div>
+  <div class="foot">© 2026 Next Gen Evolution · For research use only</div>
+</body>
+</html>

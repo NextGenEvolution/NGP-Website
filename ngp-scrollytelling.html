@@ -1,0 +1,2321 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGE — The Scrollytelling Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:  #040c18;
+  --deep:   #071525;
+  --card:   #0a1a2e;
+  --border: rgba(45,184,216,0.1);
+  --border2:rgba(45,184,216,0.18);
+  --white:  #f4f6fb;
+  --muted:  #6b87aa;
+  --cyan:   #2db8d8;
+  --cyan-b: #4dd4f0;
+  --gold:   #c8a96e;
+  --cyan-dim:rgba(45,184,216,0.10);
+  --cyan-glow:rgba(45,184,216,0.30);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--black);
+  color:var(--white);
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ── SCROLL PROGRESS ── */
+#scroll-progress{
+  position:fixed;top:0;left:0;height:2px;width:0%;
+  background:linear-gradient(90deg,var(--cyan),var(--cyan-b));
+  z-index:999;transition:width 0.1s linear;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:64px;
+  background:rgba(4,12,24,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(45,184,216,0.1);
+  transition:background 0.3s;
+}
+.nav-logo{
+  font-family:'Space Mono',monospace;
+  font-size:16px;font-weight:700;letter-spacing:0.1em;
+  color:var(--white);text-decoration:none;
+  display:flex;align-items:center;gap:10px;
+}
+.nav-logo img{height:34px;width:auto}
+.nav-chapters{display:flex;gap:4px;list-style:none}
+.nav-chapters a{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
+  padding:6px 14px;border:1px solid transparent;
+  transition:all 0.2s;
+}
+.nav-chapters a:hover,.nav-chapters a.active{
+  color:var(--cyan);border-color:rgba(45,184,216,0.3);
+  background:rgba(45,184,216,0.06);
+}
+.nav-cta{
+  font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--cyan);border:1px solid var(--cyan);
+  padding:8px 20px;text-decoration:none;
+  transition:all 0.2s;
+}
+.nav-cta:hover{background:var(--cyan);color:var(--black)}
+
+/* ── CHAPTER MARKER (invisible anchor) ── */
+.ch{display:block;height:0;visibility:hidden}
+
+/* ══════════════════════════════════════════
+   CHAPTER 0 — HERO
+══════════════════════════════════════════ */
+#hero{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  background:var(--black);
+  padding:0 48px;
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(45,184,216,0.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(45,184,216,0.045) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.hero-radials{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 70% at 60% 40%,rgba(20,80,190,0.3) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 50% at 20% 70%,rgba(10,40,100,0.35) 0%,transparent 60%);
+}
+.hero-layout{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:48px;align-items:center;
+  max-width:1280px;width:100%;margin:0 auto;
+}
+.hero-content{
+  position:relative;z-index:1;
+  max-width:580px;width:100%;
+}
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:32px;
+  display:inline-flex;align-items:center;gap:10px;
+  border:1px solid rgba(45,184,216,0.3);
+  background:rgba(45,184,216,0.06);
+  padding:8px 20px;border-radius:50px;
+}
+.hero-eyebrow::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+}
+.hero-h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(64px,9vw,130px);
+  font-weight:300;line-height:0.95;
+  letter-spacing:-0.03em;
+  margin-bottom:32px;
+}
+.hero-h1 .line{display:block;overflow:hidden}
+.hero-h1 .line span{display:block;transform:translateY(110%);animation:reveal 1s cubic-bezier(0.16,1,0.3,1) forwards}
+.hero-h1 .line:nth-child(1) span{animation-delay:0.1s}
+.hero-h1 .line:nth-child(2) span{animation-delay:0.25s}
+.hero-h1 .line:nth-child(3) span{animation-delay:0.4s}
+.hero-h1 em{font-style:italic;color:var(--cyan-b)}
+@keyframes reveal{to{transform:translateY(0)}}
+.hero-sub{
+  font-size:16px;font-weight:300;color:var(--muted);
+  max-width:520px;margin:0 0 48px;line-height:1.85;
+  opacity:0;animation:fadeup 1s ease 0.8s forwards;
+}
+@keyframes fadeup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.hero-stats{
+  display:flex;justify-content:flex-start;gap:44px;
+  padding-top:40px;border-top:1px solid var(--border);
+  opacity:0;animation:fadeup 1s ease 1s forwards;
+}
+.hero-stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:40px;font-weight:500;line-height:1;
+}
+.hero-stat-num span{color:var(--cyan)}
+.hero-stat-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);margin-top:6px;
+}
+.hero-scroll{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--muted);
+  opacity:0;animation:fadeup 1s ease 1.3s forwards;
+}
+.scroll-line{
+  width:1px;height:40px;background:linear-gradient(var(--cyan),transparent);
+  animation:scrollpulse 2s ease-in-out infinite;
+}
+@keyframes scrollpulse{0%,100%{opacity:0.4}50%{opacity:1}}
+
+/* ══════════════════════════════════════════
+   CHAPTER TRANSITIONS — full-bleed title cards
+══════════════════════════════════════════ */
+.chapter-card{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:80px 48px;
+}
+.chapter-card.dark{background:var(--black)}
+.chapter-card.deep{background:var(--deep)}
+.chapter-bg-glow{
+  position:absolute;inset:0;pointer-events:none;
+}
+.ch-inner{
+  position:relative;z-index:1;
+  max-width:1100px;width:100%;
+}
+.ch-num{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:16px;
+}
+.ch-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,7vw,96px);font-weight:300;
+  line-height:1.0;letter-spacing:-0.02em;
+  margin-bottom:28px;
+}
+.ch-title em{font-style:italic;color:var(--cyan-b)}
+.ch-subtitle{
+  font-size:16px;font-weight:300;color:var(--muted);
+  max-width:600px;line-height:1.85;
+}
+
+/* ══════════════════════════════════════════
+   SCROLL-REVEAL UTILITIES
+══════════════════════════════════════════ */
+.reveal{
+  opacity:0;transform:translateY(40px);
+  transition:opacity 0.8s ease,transform 0.8s ease;
+}
+.reveal.visible{opacity:1;transform:none}
+.reveal-left{
+  opacity:0;transform:translateX(-48px);
+  transition:opacity 0.8s ease,transform 0.8s ease;
+}
+.reveal-left.visible{opacity:1;transform:none}
+.reveal-right{
+  opacity:0;transform:translateX(48px);
+  transition:opacity 0.8s ease,transform 0.8s ease;
+}
+.reveal-right.visible{opacity:1;transform:none}
+.reveal-scale{
+  opacity:0;transform:scale(0.94);
+  transition:opacity 0.8s ease,transform 0.8s ease;
+}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+/* Staggered children */
+[data-stagger]>*{
+  opacity:0;transform:translateY(32px);
+  transition:opacity 0.7s ease,transform 0.7s ease;
+}
+[data-stagger].visible>*:nth-child(1){opacity:1;transform:none;transition-delay:0s}
+[data-stagger].visible>*:nth-child(2){opacity:1;transform:none;transition-delay:0.1s}
+[data-stagger].visible>*:nth-child(3){opacity:1;transform:none;transition-delay:0.2s}
+[data-stagger].visible>*:nth-child(4){opacity:1;transform:none;transition-delay:0.3s}
+[data-stagger].visible>*:nth-child(5){opacity:1;transform:none;transition-delay:0.4s}
+[data-stagger].visible>*:nth-child(6){opacity:1;transform:none;transition-delay:0.5s}
+[data-stagger].visible>*:nth-child(7){opacity:1;transform:none;transition-delay:0.6s}
+[data-stagger].visible>*:nth-child(8){opacity:1;transform:none;transition-delay:0.7s}
+[data-stagger].visible>*:nth-child(9){opacity:1;transform:none;transition-delay:0.8s}
+[data-stagger].visible>*:nth-child(10){opacity:1;transform:none;transition-delay:0.9s}
+
+/* ══════════════════════════════════════════
+   CHAPTER 1 — THE SCIENCE (5 non-negotiables)
+══════════════════════════════════════════ */
+.science-intro{
+  padding:100px 48px;
+  background:var(--black);
+  max-width:1200px;margin:0 auto;
+}
+.science-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  margin-top:60px;
+}
+.science-card{
+  background:var(--black);
+  padding:48px 40px;
+  position:relative;overflow:hidden;
+}
+.science-card-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:80px;font-weight:300;
+  color:rgba(45,184,216,0.06);
+  position:absolute;top:12px;right:20px;line-height:1;
+  pointer-events:none;
+}
+.science-card-icon{
+  font-size:24px;margin-bottom:20px;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;
+  border:1px solid var(--border2);
+  color:var(--cyan);
+}
+.science-card-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:500;
+  margin-bottom:12px;line-height:1.15;
+}
+.science-card-text{
+  font-size:14px;color:var(--muted);line-height:1.75;font-weight:300;
+}
+.science-card.full{grid-column:1/-1}
+
+/* big stat pull quote */
+.big-stat{
+  padding:100px 48px;
+  text-align:center;
+  background:var(--deep);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.big-stat-number{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(80px,14vw,180px);
+  font-weight:300;line-height:1;
+  color:var(--white);
+  letter-spacing:-0.04em;
+}
+.big-stat-number span{color:var(--cyan)}
+.big-stat-label{
+  font-family:'Space Mono',monospace;
+  font-size:11px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--muted);margin-top:16px;
+}
+
+/* ══════════════════════════════════════════
+   CATEGORY INTRO BANNER
+══════════════════════════════════════════ */
+.cat-banner{
+  padding:120px 48px 80px;
+  position:relative;overflow:hidden;
+}
+.cat-banner.pen-bg{
+  background:
+    radial-gradient(ellipse 70% 60% at 80% 50%,rgba(45,184,216,0.08) 0%,transparent 65%),
+    var(--deep);
+}
+.cat-banner.vial-bg{
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 50%,rgba(200,169,110,0.06) 0%,transparent 65%),
+    var(--black);
+}
+.cat-banner.nasal-bg{
+  background:
+    radial-gradient(ellipse 70% 60% at 60% 40%,rgba(120,160,220,0.06) 0%,transparent 65%),
+    var(--deep);
+}
+.cat-banner-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.cat-banner-tag{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;
+}
+.cat-banner-tag::before{
+  content:'';width:32px;height:1px;background:var(--cyan);
+}
+.cat-banner h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(40px,6vw,72px);font-weight:300;
+  line-height:1.05;letter-spacing:-0.02em;
+  margin-bottom:20px;
+}
+.cat-banner h2 em{font-style:italic;color:var(--cyan-b)}
+.cat-banner p{
+  font-size:15px;color:var(--muted);line-height:1.85;font-weight:300;
+}
+.cat-badge-row{
+  display:flex;flex-wrap:wrap;gap:10px;
+  margin-top:32px;
+}
+.cat-badge{
+  font-family:'Space Mono',monospace;
+  font-size:9px;font-weight:700;letter-spacing:0.1em;
+  padding:6px 14px;border-radius:20px;
+}
+.cat-badge.pen{background:rgba(45,184,216,0.12);color:var(--cyan);border:1px solid rgba(45,184,216,0.3)}
+.cat-badge.vial{background:rgba(200,169,110,0.1);color:var(--gold);border:1px solid rgba(200,169,110,0.3)}
+.cat-badge.nasal{background:rgba(120,160,220,0.1);color:#7fa8dc;border:1px solid rgba(120,160,220,0.3)}
+.cat-banner-right{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+}
+.cat-mini-stat{
+  background:var(--card);border:1px solid var(--border2);
+  padding:24px 20px;
+}
+.cat-mini-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:500;color:var(--white);
+  line-height:1;margin-bottom:6px;
+}
+.cat-mini-num span{color:var(--cyan)}
+.cat-mini-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ══════════════════════════════════════════
+   PRODUCT SPOTLIGHT — hero product per category
+══════════════════════════════════════════ */
+.spotlight{
+  padding:0 48px 80px;
+  background:inherit;
+}
+.spotlight-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:480px 1fr;gap:0;
+  border:1px solid var(--border2);
+  overflow:hidden;
+}
+.spotlight-img{
+  background:#c8ccd6;
+  aspect-ratio:1/1;
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.spotlight-img img{width:100%;height:100%;object-fit:cover}
+.spotlight-body{
+  padding:48px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:var(--card);
+}
+.spotlight-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:12px;
+}
+.spotlight-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,4vw,56px);font-weight:400;
+  line-height:1.05;margin-bottom:8px;
+}
+.spotlight-dose{
+  font-size:13px;color:var(--muted);font-weight:300;margin-bottom:24px;
+}
+.spotlight-desc{
+  font-size:15px;color:rgba(180,190,210,0.85);
+  line-height:1.8;font-weight:300;margin-bottom:28px;
+  flex:1;
+}
+.spotlight-feats{
+  list-style:none;display:flex;flex-direction:column;gap:10px;
+  margin-bottom:32px;
+  border-top:1px solid var(--border);padding-top:24px;
+}
+.spotlight-feats li{
+  font-size:13px;color:var(--muted);
+  display:flex;align-items:center;gap:12px;
+}
+.spotlight-feats li::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);flex-shrink:0;
+}
+.spotlight-footer{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.spotlight-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:40px;font-weight:400;
+}
+.spotlight-price sup{font-size:16px;font-family:'Inter',sans-serif;color:var(--muted)}
+.spotlight-price sub{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:0.08em}
+.btn-spot{
+  font-family:'Space Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;background:var(--cyan);color:var(--black);
+  border:none;padding:14px 32px;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  transition:opacity 0.2s;
+}
+.btn-spot:hover{opacity:0.85}
+
+/* ══════════════════════════════════════════
+   PRODUCT GRID (scrollable)
+══════════════════════════════════════════ */
+.product-strip{
+  padding:0 48px 80px;
+}
+.strip-heading{
+  max-width:1200px;margin:0 auto 32px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.strip-label{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);
+}
+.strip-count{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--muted);
+}
+.product-grid-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);
+  max-width:1200px;margin:0 auto;
+}
+.pcard{
+  background:var(--card);
+  display:flex;flex-direction:column;
+  cursor:pointer;transition:background 0.2s;
+  position:relative;
+}
+.pcard:hover{background:#0e1f38}
+.pcard-img{
+  aspect-ratio:1/1;overflow:hidden;
+  background:#c8ccd6;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.pcard-img img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform 0.5s ease;
+}
+.pcard:hover .pcard-img img{transform:scale(1.04)}
+.pcard-badges{
+  position:absolute;top:12px;right:12px;
+  display:flex;gap:5px;
+}
+.badge{
+  font-family:'Space Mono',monospace;
+  font-size:9px;font-weight:700;letter-spacing:0.07em;
+  padding:3px 9px;border-radius:20px;
+}
+.bp{background:rgba(45,184,216,0.15);color:var(--cyan);border:1px solid rgba(45,184,216,0.3)}
+.bv{background:rgba(200,169,110,0.12);color:var(--gold);border:1px solid rgba(200,169,110,0.3)}
+.bn{background:rgba(120,160,220,0.12);color:#7fa8dc;border:1px solid rgba(120,160,220,0.3)}
+.brx{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border)}
+.pcard-body{padding:24px 24px 20px;flex:1;display:flex;flex-direction:column}
+.pcard-cat{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:8px;
+}
+.pcard-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:500;line-height:1.1;
+  margin-bottom:4px;
+}
+.pcard-dose{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:12px}
+.pcard-desc{
+  font-size:13px;color:rgba(180,190,210,0.78);
+  line-height:1.7;font-weight:300;flex:1;margin-bottom:16px;
+}
+.pcard-feats{
+  list-style:none;display:flex;flex-direction:column;gap:6px;
+  border-top:1px solid var(--border);padding-top:14px;margin-bottom:16px;
+}
+.pcard-feats li{
+  font-size:12px;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+}
+.pcard-feats li::before{
+  content:'';width:4px;height:4px;border-radius:50%;
+  background:var(--cyan);flex-shrink:0;
+}
+.pcard-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:16px;border-top:1px solid var(--border);margin-top:auto;
+}
+.pcard-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:500;
+}
+.pcard-price sup{font-size:13px;font-family:'Inter',sans-serif;color:var(--muted)}
+.pcard-price sub{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:0.07em}
+.pcard-btn{
+  font-family:'Space Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  background:var(--cyan);color:var(--black);
+  border:none;padding:10px 20px;cursor:pointer;
+  transition:opacity 0.2s;
+}
+.pcard-btn:hover{opacity:0.85}
+
+/* ══════════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════════ */
+.marquee-wrap{
+  overflow:hidden;border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:var(--deep);padding:14px 0;
+}
+.marquee-track{
+  display:flex;width:max-content;
+  animation:marquee 40s linear infinite;
+}
+.marquee-item{
+  display:flex;align-items:center;gap:16px;padding:0 28px;
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;
+}
+.mdot{width:3px;height:3px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════════════════════════════
+   HORIZONTAL SCROLL SHOWCASE
+══════════════════════════════════════════ */
+.hscroll-section{
+  padding:80px 0;
+  overflow:hidden;
+}
+.hscroll-label{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:24px;
+  padding:0 48px;
+}
+.hscroll-track{
+  display:flex;gap:1px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding:0 48px;
+  scroll-snap-type:x mandatory;
+}
+.hscroll-track::-webkit-scrollbar{display:none}
+.hcard{
+  flex:0 0 320px;
+  background:var(--card);
+  border:1px solid var(--border);
+  display:flex;flex-direction:column;
+  scroll-snap-align:start;
+}
+.hcard-img{
+  height:200px;overflow:hidden;background:#c8ccd6;
+  display:flex;align-items:center;justify-content:center;
+}
+.hcard-img img{width:100%;height:100%;object-fit:cover}
+.hcard-body{padding:20px 20px 16px;flex:1;display:flex;flex-direction:column}
+.hcard-cat{
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:6px;
+}
+.hcard-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:500;line-height:1.1;margin-bottom:4px;
+}
+.hcard-dose{font-size:12px;color:var(--muted);font-weight:300;margin-bottom:10px}
+.hcard-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;margin-top:auto;
+}
+.hcard-price sup{font-size:12px;font-family:'Inter',sans-serif;color:var(--muted)}
+
+/* ══════════════════════════════════════════
+   DOSAGE PROTOCOL VISUAL (for key products)
+══════════════════════════════════════════ */
+.protocol-section{
+  padding:100px 48px;
+  background:var(--deep);
+}
+.protocol-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;
+}
+.protocol-left h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,4vw,52px);font-weight:400;
+  line-height:1.1;margin-bottom:16px;
+}
+.protocol-left h3 em{font-style:italic;color:var(--cyan)}
+.protocol-left p{
+  font-size:14px;color:var(--muted);line-height:1.75;font-weight:300;
+}
+.protocol-right{display:flex;flex-direction:column;gap:2px}
+.protocol-step{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:20px 24px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-bottom:none;
+}
+.protocol-step:last-child{border-bottom:1px solid var(--border)}
+.step-num{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--black);background:var(--cyan);
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;letter-spacing:0;
+}
+.step-text{font-size:13px;color:rgba(180,195,215,0.85);line-height:1.65}
+.protocol-warning{
+  background:rgba(200,169,110,0.07);border-left:3px solid var(--gold);
+  padding:14px 18px;font-size:12px;color:rgba(200,169,110,0.85);
+  line-height:1.6;margin-top:16px;
+}
+
+/* ══════════════════════════════════════════
+   5 NON-NEGOTIABLES — sticky side panel
+══════════════════════════════════════════ */
+.why-fullbleed{
+  padding:100px 48px;
+  background:var(--black);
+}
+.why-inner{
+  max-width:1200px;margin:0 auto;
+}
+.why-heading{
+  text-align:center;margin-bottom:80px;
+}
+.why-heading .section-tag{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:12px;
+}
+.why-heading h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,64px);font-weight:300;
+  line-height:1.1;
+}
+.why-heading h2 em{font-style:italic;color:var(--cyan-b)}
+.why-cards{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+  background:var(--border);
+}
+.why-card{
+  background:var(--black);
+  padding:40px 28px;
+  position:relative;overflow:hidden;
+  border-bottom:2px solid transparent;
+  transition:border-color 0.3s;
+}
+.why-card:hover{border-bottom-color:var(--cyan)}
+.why-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:64px;font-weight:300;
+  color:rgba(45,184,216,0.06);
+  position:absolute;top:10px;right:14px;
+  line-height:1;pointer-events:none;
+}
+.why-icon{
+  font-size:20px;color:var(--cyan);
+  margin-bottom:20px;margin-top:24px;
+}
+.why-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:500;margin-bottom:10px;
+}
+.why-text{font-size:13px;color:var(--muted);line-height:1.65;font-weight:300}
+
+/* ══════════════════════════════════════════
+   PULL QUOTE
+══════════════════════════════════════════ */
+.pull-quote{
+  padding:120px 48px;
+  text-align:center;
+  background:var(--deep);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.pull-quote::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 50% 70% at 50% 50%,rgba(45,184,216,0.05) 0%,transparent 65%);
+  pointer-events:none;
+}
+.pull-quote-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:120px;line-height:0.6;color:rgba(45,184,216,0.12);
+  margin-bottom:16px;display:block;
+}
+.pull-quote-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,4vw,52px);font-weight:300;
+  line-height:1.3;letter-spacing:-0.01em;
+  max-width:900px;margin:0 auto 24px;
+  position:relative;
+}
+.pull-quote-text em{font-style:italic;color:var(--cyan-b)}
+.pull-quote-source{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ══════════════════════════════════════════
+   DELIVERY FORMATS (comparison grid)
+══════════════════════════════════════════ */
+.formats-section{
+  padding:100px 48px;
+  background:var(--black);
+}
+.formats-inner{max-width:1200px;margin:0 auto}
+.formats-heading{
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;
+  align-items:end;margin-bottom:60px;
+}
+.formats-heading h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,60px);font-weight:300;line-height:1.05;
+}
+.formats-heading h2 em{font-style:italic;color:var(--cyan-b)}
+.formats-heading p{font-size:14px;color:var(--muted);line-height:1.8;font-weight:300}
+.formats-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);
+}
+.format-card{
+  background:var(--card);padding:48px 36px;
+  position:relative;overflow:hidden;
+}
+.format-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.format-card.pen-card::before{background:var(--cyan)}
+.format-card.vial-card::before{background:var(--gold)}
+.format-card.nasal-card::before{background:#7fa8dc}
+.format-icon{
+  font-size:28px;margin-bottom:24px;
+}
+.format-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.format-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:400;margin-bottom:16px;
+}
+.format-desc{font-size:13px;color:var(--muted);line-height:1.75;font-weight:300;margin-bottom:24px}
+.format-points{list-style:none;display:flex;flex-direction:column;gap:8px}
+.format-points li{
+  font-size:13px;color:rgba(180,195,215,0.8);
+  display:flex;align-items:center;gap:10px;
+}
+.format-points li::before{
+  content:'';width:4px;height:4px;border-radius:50%;
+  background:var(--cyan);flex-shrink:0;
+}
+.format-count{
+  margin-top:28px;padding-top:20px;border-top:1px solid var(--border);
+  font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;
+}
+.format-count span{color:var(--cyan)}
+.format-count-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);
+}
+
+/* ══════════════════════════════════════════
+   PURITY / QUALITY STRIP
+══════════════════════════════════════════ */
+.quality-strip{
+  padding:80px 48px;
+  background:var(--deep);
+  border-top:1px solid var(--border);
+}
+.quality-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border);
+}
+.quality-cell{
+  background:var(--deep);
+  padding:40px 32px;text-align:center;
+}
+.quality-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:52px;font-weight:300;line-height:1;margin-bottom:8px;
+}
+.quality-num span{color:var(--cyan)}
+.quality-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);
+}
+
+/* ══════════════════════════════════════════
+   FINAL CTA
+══════════════════════════════════════════ */
+.final-cta{
+  min-height:90vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:100px 48px;
+  text-align:center;
+  background:var(--black);
+  position:relative;overflow:hidden;
+}
+.final-cta::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 50%,rgba(45,184,216,0.07) 0%,transparent 60%),
+    linear-gradient(rgba(45,184,216,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(45,184,216,0.03) 1px,transparent 1px);
+  background-size:100% 100%,64px 64px,64px 64px;
+  pointer-events:none;
+}
+.final-cta-inner{position:relative;z-index:1;max-width:900px}
+.final-cta-tag{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:24px;
+  display:flex;align-items:center;justify-content:center;gap:14px;
+}
+.final-cta-tag::before,.final-cta-tag::after{
+  content:'';width:40px;height:1px;background:rgba(45,184,216,0.4);
+}
+.final-cta h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,8vw,100px);font-weight:300;
+  line-height:1.0;letter-spacing:-0.02em;margin-bottom:24px;
+}
+.final-cta h2 em{font-style:italic;color:var(--cyan-b)}
+.final-cta p{
+  font-size:16px;color:var(--muted);font-weight:300;
+  line-height:1.85;margin-bottom:48px;
+}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-prim{
+  font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  background:var(--cyan);color:var(--black);
+  padding:16px 40px;text-decoration:none;
+  transition:opacity 0.2s,transform 0.2s;display:inline-block;
+}
+.btn-prim:hover{opacity:0.85;transform:translateY(-1px)}
+.btn-ghost{
+  font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--white);border:1px solid rgba(255,255,255,0.2);
+  padding:16px 40px;text-decoration:none;
+  transition:border-color 0.2s;display:inline-block;
+}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.5)}
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer{
+  background:var(--black);
+  border-top:1px solid var(--border);
+  padding:48px 48px 28px;
+}
+.footer-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-brand img{height:40px;width:auto}
+.footer-name{
+  font-family:'Space Mono',monospace;
+  font-size:14px;font-weight:700;letter-spacing:0.08em;
+}
+.footer-tagline{font-size:11px;color:var(--muted);letter-spacing:0.04em}
+.footer-right{
+  font-size:11px;color:rgba(107,119,153,0.7);
+  text-align:right;line-height:1.7;max-width:440px;
+}
+.footer-right a{
+  color:var(--muted);text-decoration:none;
+  border-bottom:1px solid rgba(107,135,170,0.3);
+  transition:color 0.2s;
+}
+.footer-right a:hover{color:var(--cyan)}
+
+/* ══════════════════════════════════════════
+   WHATSAPP
+══════════════════════════════════════════ */
+.wa-btn{
+  position:fixed;bottom:28px;right:28px;z-index:600;
+  background:#25d366;color:#fff;
+  display:flex;align-items:center;gap:10px;
+  padding:12px 20px;border-radius:50px;text-decoration:none;
+  font-size:14px;font-weight:600;
+  box-shadow:0 8px 32px rgba(37,211,102,0.35);
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.wa-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(37,211,102,0.45)}
+.wa-btn svg{width:20px;height:20px}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+/* ════════════════════════════════════
+   PEN EXPLODE ANIMATION
+════════════════════════════════════ */
+.hero-pen-col{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  opacity:0;animation:fadeup 1.1s ease 0.55s forwards;
+}
+.pen-bg-glow{
+  position:absolute;
+  width:250px;height:620px;
+  background:radial-gradient(ellipse,rgba(45,184,216,0.16) 0%,transparent 65%);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;filter:blur(36px);
+  transition:opacity 1s ease;
+}
+.pen-wrapper{
+  position:relative;width:100%;max-width:360px;
+  animation:penFloat 5s ease-in-out infinite;
+}
+.pen-wrapper.paused{animation-play-state:paused;}
+@keyframes penFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-18px);}
+}
+.pen-svg{width:100%;height:auto;overflow:visible;}
+/* Every part transitions smoothly */
+.pen-comp{
+  transition:transform 1.5s cubic-bezier(0.16,1,0.3,1);
+  will-change:transform;
+}
+/* Labels hidden by default */
+.part-label-g{
+  opacity:0;
+  transition:opacity 0.01s;
+  pointer-events:none;
+}
+/* Ghost assembled outline – dims in and out */
+.pen-ghost{opacity:0;transition:opacity 0.9s ease 0.2s;}
+/* Ambient cartridge glow */
+.assembled-glow{transition:opacity 0.9s ease;}
+
+/* ── EXPLODED transforms ── */
+.pen-svg.pen-exploded #pc1{transform:translateY(-90px);}
+.pen-svg.pen-exploded #pc2{transform:translateY(-45px);}
+.pen-svg.pen-exploded #pc3{transform:translateY(0);}
+.pen-svg.pen-exploded #pc4{transform:translateY(35px);}
+.pen-svg.pen-exploded #pc5{transform:translateY(75px);}
+.pen-svg.pen-exploded #pc6{transform:translateY(115px);}
+.pen-svg.pen-exploded #pc7{transform:translateY(148px);}
+
+/* Labels fade in when exploded — staggered */
+.pen-svg.pen-exploded #pc1 .part-label-g{opacity:1;transition:opacity 0.65s ease 0.90s;}
+.pen-svg.pen-exploded #pc2 .part-label-g{opacity:1;transition:opacity 0.65s ease 1.00s;}
+.pen-svg.pen-exploded #pc3 .part-label-g{opacity:1;transition:opacity 0.65s ease 1.10s;}
+.pen-svg.pen-exploded #pc4 .part-label-g{opacity:1;transition:opacity 0.65s ease 1.20s;}
+.pen-svg.pen-exploded #pc5 .part-label-g{opacity:1;transition:opacity 0.65s ease 1.30s;}
+.pen-svg.pen-exploded #pc6 .part-label-g{opacity:1;transition:opacity 0.65s ease 1.40s;}
+.pen-svg.pen-exploded #pc7 .part-label-g{opacity:1;transition:opacity 0.65s ease 1.50s;}
+
+.pen-svg.pen-exploded .pen-ghost{opacity:1;}
+.pen-svg.pen-exploded .assembled-glow{opacity:0;}
+
+/* Liquid surface pulse */
+@keyframes liquidPulse{0%,100%{opacity:0.85;}50%{opacity:1;}}
+.liquid-pulse{animation:liquidPulse 3.5s ease-in-out infinite;}
+/* Bubbles rising in liquid */
+@keyframes bubbleRise{
+  0%{transform:translateY(0) scale(1);opacity:0.65;}
+  100%{transform:translateY(-42px) scale(0.25);opacity:0;}
+}
+.lbub{animation:bubbleRise 3.2s ease-in infinite;}
+.lbub:nth-child(2){animation-delay:1.1s;}
+.lbub:nth-child(3){animation-delay:2.3s;}
+
+@media(max-width:1100px){
+  .hero-layout{grid-template-columns:1fr;}
+  .hero-pen-col{display:none;}
+}
+
+@media(max-width:1100px){
+  .product-grid-strip{grid-template-columns:repeat(2,1fr)}
+  .why-cards{grid-template-columns:repeat(3,1fr)}
+  .cat-banner-inner{grid-template-columns:1fr;gap:40px}
+  .spotlight-inner{grid-template-columns:1fr}
+  .spotlight-img{aspect-ratio:16/9}
+  .protocol-inner{grid-template-columns:1fr}
+  .formats-grid{grid-template-columns:1fr}
+  .quality-inner{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .nav-chapters{display:none}
+  .hero,
+  .chapter-card,
+  .science-intro,
+  .cat-banner,
+  .spotlight,
+  .product-strip,
+  .protocol-section,
+  .why-fullbleed,
+  .pull-quote,
+  .formats-section,
+  .quality-strip,
+  .final-cta{padding-left:20px;padding-right:20px}
+  .hscroll-track{padding:0 20px}
+  .hscroll-label{padding:0 20px}
+  .product-grid-strip{grid-template-columns:1fr}
+  .why-cards{grid-template-columns:1fr}
+  .science-grid{grid-template-columns:1fr}
+  .hero-stats{flex-wrap:wrap;gap:28px}
+  .formats-heading{grid-template-columns:1fr}
+  .quality-inner{grid-template-columns:1fr}
+  footer{padding:40px 20px 20px}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .footer-right{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <img src="NGE Transparent logo.png" alt="NGE" onerror="this.style.display='none'">
+    <span>NGE</span>
+  </a>
+  <ul class="nav-chapters">
+    <li><a href="#ch-science" data-chapter="science">The Science</a></li>
+    <li><a href="#ch-pens" data-chapter="pens">Pens</a></li>
+    <li><a href="#ch-vials" data-chapter="vials">Vials</a></li>
+    <li><a href="#ch-nasals" data-chapter="nasals">Nasal</a></li>
+    <li><a href="#ch-cta" data-chapter="cta">Contact</a></li>
+  </ul>
+  <a href="ngp-peptides.html" class="nav-cta">Shop Now</a>
+</nav>
+
+<!-- ══════════════════════════ -->
+<!-- HERO                       -->
+<!-- ══════════════════════════ -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radials"></div>
+
+  <div class="hero-layout">
+    <!-- LEFT: text -->
+    <div class="hero-content">
+      <div class="hero-eyebrow">Pharmaceutical-Grade · Swiss Origin</div>
+      <h1 class="hero-h1">
+        <span class="line"><span>Science.</span></span>
+        <span class="line"><span>Strength.</span></span>
+        <span class="line"><span><em>Transformation.</em></span></span>
+      </h1>
+      <p class="hero-sub">
+        Next Gen Evolution engineers advanced peptide compounds for athletes, clinicians, and longevity pioneers — clinically informed, meticulously dosed, delivered with precision.
+      </p>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num"><span>24</span></div>
+          <div class="hero-stat-label">Compounds</div>
+        </div>
+        <div>
+          <div class="hero-stat-num"><span>3</span></div>
+          <div class="hero-stat-label">Delivery Forms</div>
+        </div>
+        <div>
+          <div class="hero-stat-num"><span>99</span>%<span>+</span></div>
+          <div class="hero-stat-label">Purity Grade</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: animated pen diagram -->
+    <div class="hero-pen-col">
+      <div class="pen-bg-glow"></div>
+      <div class="pen-wrapper" id="penWrapper">
+
+        <svg class="pen-svg" id="penSvg" viewBox="0 0 360 820" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!--
+              cyl: Realistic white cylinder gradient.
+              Top-lit pen: left edge = specular highlight (brightest),
+              right edge = shadow (medium grey). Matches product photo.
+            -->
+            <linearGradient id="cyl" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#d8d8d8"/>
+              <stop offset="4%"   stop-color="#f0f0f0"/>
+              <stop offset="10%"  stop-color="#fafafa"/>
+              <stop offset="18%"  stop-color="#ffffff"/>
+              <stop offset="28%"  stop-color="#fdfdfd"/>
+              <stop offset="40%"  stop-color="#f8f8f8"/>
+              <stop offset="54%"  stop-color="#f2f2f2"/>
+              <stop offset="68%"  stop-color="#e9e9e9"/>
+              <stop offset="80%"  stop-color="#dedede"/>
+              <stop offset="90%"  stop-color="#d2d2d2"/>
+              <stop offset="100%" stop-color="#c2c2c2"/>
+            </linearGradient>
+            <!-- Slightly narrower (hub / taper zones) -->
+            <linearGradient id="cylN" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#d0d0d0"/>
+              <stop offset="8%"   stop-color="#eeeeee"/>
+              <stop offset="18%"  stop-color="#fafafa"/>
+              <stop offset="30%"  stop-color="#ffffff"/>
+              <stop offset="50%"  stop-color="#f8f8f8"/>
+              <stop offset="70%"  stop-color="#efefef"/>
+              <stop offset="86%"  stop-color="#e2e2e2"/>
+              <stop offset="100%" stop-color="#cccccc"/>
+            </linearGradient>
+            <!-- Thin separation ring: slightly darker than body -->
+            <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#aaaaaa"/>
+              <stop offset="20%"  stop-color="#c8c8c8"/>
+              <stop offset="50%"  stop-color="#d8d8d8"/>
+              <stop offset="80%"  stop-color="#c8c8c8"/>
+              <stop offset="100%" stop-color="#aaaaaa"/>
+            </linearGradient>
+            <!-- Pen clip: same white but top-face lit -->
+            <linearGradient id="clipG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#f8f8f8"/>
+              <stop offset="40%"  stop-color="#ffffff"/>
+              <stop offset="100%" stop-color="#e8e8e8"/>
+            </linearGradient>
+            <!-- Clip side: thin vertical gradient for raised clip -->
+            <linearGradient id="clipSide" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#b8b8b8"/>
+              <stop offset="50%"  stop-color="#e0e0e0"/>
+              <stop offset="100%" stop-color="#f0f0f0"/>
+            </linearGradient>
+            <!-- Glass cartridge walls (semi-transparent white sides) -->
+            <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#d8d8d8"/>
+              <stop offset="8%"   stop-color="#f0f0f0"/>
+              <stop offset="18%"  stop-color="#fafafa" stop-opacity="0.85"/>
+              <stop offset="28%"  stop-color="#ffffff" stop-opacity="0.4"/>
+              <stop offset="50%"  stop-color="#f0f0f0" stop-opacity="0.2"/>
+              <stop offset="72%"  stop-color="#f0f0f0" stop-opacity="0.4"/>
+              <stop offset="82%"  stop-color="#fafafa" stop-opacity="0.85"/>
+              <stop offset="92%"  stop-color="#eeeeee"/>
+              <stop offset="100%" stop-color="#c4c4c4"/>
+            </linearGradient>
+            <!-- Cyan peptide liquid -->
+            <linearGradient id="liq" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#9aedff" stop-opacity="0.96"/>
+              <stop offset="40%"  stop-color="#2db8d8" stop-opacity="0.92"/>
+              <stop offset="100%" stop-color="#0a6070" stop-opacity="0.88"/>
+            </linearGradient>
+            <!-- Liquid shimmer (light refraction on top of liquid) -->
+            <linearGradient id="liqShimm" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
+              <stop offset="25%"  stop-color="rgba(255,255,255,0.3)"/>
+              <stop offset="45%"  stop-color="rgba(255,255,255,0.5)"/>
+              <stop offset="65%"  stop-color="rgba(255,255,255,0.25)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </linearGradient>
+            <!-- Rubber stopper material -->
+            <linearGradient id="rub" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#6a6a6a"/>
+              <stop offset="25%"  stop-color="#888888"/>
+              <stop offset="50%"  stop-color="#989898"/>
+              <stop offset="75%"  stop-color="#888888"/>
+              <stop offset="100%" stop-color="#6a6a6a"/>
+            </linearGradient>
+            <!-- Drive mechanism: metallic grey -->
+            <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="#5a5a5a"/>
+              <stop offset="15%"  stop-color="#888888"/>
+              <stop offset="35%"  stop-color="#b8b8b8"/>
+              <stop offset="50%"  stop-color="#d0d0d0"/>
+              <stop offset="65%"  stop-color="#b8b8b8"/>
+              <stop offset="85%"  stop-color="#888888"/>
+              <stop offset="100%" stop-color="#5a5a5a"/>
+            </linearGradient>
+            <!-- Highlight gleam: narrow bright line at left edge (top of cylinder) -->
+            <linearGradient id="gleam" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stop-color="rgba(255,255,255,0.9)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </linearGradient>
+            <!-- Vertical spec streak on liquid surface -->
+            <linearGradient id="specV" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="rgba(255,255,255,0.7)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </linearGradient>
+            <!-- Drop shadow per part -->
+            <filter id="ds" x="-25%" y="-15%" width="160%" height="145%">
+              <feDropShadow dx="4" dy="6" stdDeviation="6" flood-color="rgba(0,0,0,0.25)"/>
+            </filter>
+            <!-- Liquid surface glow -->
+            <filter id="lg" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <!-- Ambient glow on cartridge -->
+            <filter id="ag" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="18" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Ghost assembled silhouette -->
+          <g class="pen-ghost">
+            <path d="M60,184 L60,264 L140,264 L140,200 Q140,178 100,172 Q60,178 60,184 Z"
+              fill="none" stroke="rgba(45,184,216,0.07)" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <rect x="64" y="264" width="72" height="28" rx="1"
+              fill="none" stroke="rgba(45,184,216,0.07)" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <rect x="60" y="292" width="80" height="172" rx="1"
+              fill="none" stroke="rgba(45,184,216,0.07)" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <rect x="60" y="464" width="80" height="24" rx="1"
+              fill="none" stroke="rgba(45,184,216,0.07)" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <rect x="60" y="488" width="80" height="54" rx="1"
+              fill="none" stroke="rgba(45,184,216,0.07)" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <rect x="58" y="542" width="84" height="64" rx="1"
+              fill="none" stroke="rgba(45,184,216,0.07)" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <path d="M60,606 L60,630 Q60,652 100,655 Q140,652 140,630 L140,606 Z"
+              fill="none" stroke="rgba(45,184,216,0.07)" stroke-width="1.2" stroke-dasharray="5 4"/>
+          </g>
+
+          <!-- Ambient glow on cartridge (assembled state) -->
+          <ellipse class="assembled-glow" cx="100" cy="378"
+            rx="52" ry="90" fill="rgba(45,184,216,0.07)" filter="url(#ag)"/>
+
+          <!-- ═══════════════════════════════════════════
+               PART 1  ──  NEEDLE GUARD
+               Matches the product photo: smooth rounded
+               bullet tip + plain white cylinder body.
+               The clip starts here and runs down the barrel.
+          ═══════════════════════════════════════════ -->
+          <g class="pen-comp" id="pc1">
+            <!--
+              Smooth rounded bullet tip:
+              Path = rectangle from y=200 down to y=264,
+              curving up to a dome peak at y=170, centered x=100.
+            -->
+            <path d="M60,264 L60,200 Q60,170 100,163 Q140,170 140,200 L140,264 Z"
+              fill="url(#cyl)" filter="url(#ds)"/>
+            <!-- Specular gleam strip at left edge (top of cylinder) -->
+            <path d="M60,264 L60,200 Q60,174 74,167 L74,264 Z"
+              fill="url(#gleam)" opacity="0.55"/>
+            <!-- Subtle bottom ring separating cap from hub -->
+            <rect x="60" y="258" width="80" height="6" rx="0" fill="url(#ring)"/>
+            <!-- Pen clip: long flat ridge. Attached at cap bottom, extends down barrel.
+                 In this part, only the cap portion of the clip is shown. -->
+            <rect x="55" y="200" width="6" height="62" rx="3" fill="url(#clipG)" filter="url(#ds)"/>
+            <!-- Clip left shadow line (under the clip) -->
+            <line x1="61" y1="200" x2="61" y2="262" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+            <!-- Subtle X mark on cap -->
+            <g transform="translate(87,216)" opacity="0.18">
+              <line x1="0" y1="0" x2="12" y2="12" stroke="#222" stroke-width="1.8"/>
+              <line x1="12" y1="0" x2="0"  y2="12" stroke="#222" stroke-width="1.8"/>
+            </g>
+            <!-- LABEL -->
+            <g class="part-label-g">
+              <line x1="142" y1="213" x2="164" y2="213" stroke="rgba(45,184,216,0.65)" stroke-width="0.9"/>
+              <circle cx="163" cy="213" r="2.2" fill="#2db8d8"/>
+              <text x="170" y="208" fill="#2db8d8" font-size="8.5" font-family="Space Mono,monospace" font-weight="700" letter-spacing="1.5">01</text>
+              <text x="170" y="219" fill="#f4f6fb" font-size="12.5" font-family="Cormorant Garamond,serif" font-style="italic">Needle Guard</text>
+              <text x="170" y="230" fill="#6b87aa" font-size="8" font-family="Space Mono,monospace" letter-spacing="0.5">Removable Cap</text>
+            </g>
+          </g>
+
+          <!-- ═══════════════════════════════════════════
+               PART 2  ──  NEEDLE HUB
+               The inner connector: slightly metallic.
+          ═══════════════════════════════════════════ -->
+          <g class="pen-comp" id="pc2">
+            <rect x="64" y="264" width="72" height="28" rx="2"
+              fill="url(#metal)" filter="url(#ds)"/>
+            <!-- Ring bands -->
+            <rect x="62" y="264" width="76" height="5" rx="1" fill="url(#ring)"/>
+            <rect x="62" y="287" width="76" height="5" rx="1" fill="url(#ring)"/>
+            <!-- Needle centre dot -->
+            <circle cx="100" cy="278" r="4" fill="#c0c0c0"/>
+            <circle cx="100" cy="278" r="2" fill="#e8e8e8"/>
+            <!-- LABEL -->
+            <g class="part-label-g">
+              <line x1="140" y1="278" x2="164" y2="278" stroke="rgba(45,184,216,0.65)" stroke-width="0.9"/>
+              <circle cx="163" cy="278" r="2.2" fill="#2db8d8"/>
+              <text x="170" y="273" fill="#2db8d8" font-size="8.5" font-family="Space Mono,monospace" font-weight="700" letter-spacing="1.5">02</text>
+              <text x="170" y="284" fill="#f4f6fb" font-size="12.5" font-family="Cormorant Garamond,serif" font-style="italic">Needle Hub</text>
+              <text x="170" y="295" fill="#6b87aa" font-size="8" font-family="Space Mono,monospace" letter-spacing="0.5">Sterile Mount</text>
+            </g>
+          </g>
+
+          <!-- ═══════════════════════════════════════════
+               PART 3  ──  GLASS CARTRIDGE  ★
+               The main barrel section. Matches real pen:
+               white outer walls + transparent window showing
+               cyan peptide solution. Product label on barrel.
+          ═══════════════════════════════════════════ -->
+          <g class="pen-comp" id="pc3">
+            <!-- Outer barrel walls (white, same as real pen exterior) -->
+            <rect x="60" y="292" width="80" height="172"
+              fill="url(#cyl)" filter="url(#ds)"/>
+            <!-- Glass overlay (gives slight transparency / depth to barrel) -->
+            <rect x="60" y="292" width="80" height="172"
+              fill="url(#glass)" opacity="0.6"/>
+            <!-- Peptide liquid fill — visible through barrel window -->
+            <rect x="74" y="348" width="52" height="116"
+              fill="url(#liq)" class="liquid-pulse"/>
+            <!-- Liquid shimmer -->
+            <rect x="74" y="348" width="52" height="116"
+              fill="url(#liqShimm)" opacity="0.45"/>
+            <!-- Glass layer over liquid (barrel wall) -->
+            <rect x="74" y="348" width="52" height="116"
+              fill="url(#glass)" opacity="0.5"/>
+            <!-- Liquid surface glow line -->
+            <line x1="74" y1="348" x2="126" y2="348"
+              stroke="#9aedff" stroke-width="2.5" filter="url(#lg)" opacity="0.85"/>
+            <!-- Light refraction streak on liquid -->
+            <rect x="78" y="348" width="3" height="112"
+              fill="url(#specV)" opacity="0.5"/>
+            <!-- Rising bubbles in liquid -->
+            <circle class="lbub" cx="88"  cy="445" r="2.4" fill="rgba(255,255,255,0.55)"/>
+            <circle class="lbub" cx="105" cy="450" r="1.6" fill="rgba(255,255,255,0.45)"/>
+            <circle class="lbub" cx="116" cy="455" r="2.0" fill="rgba(255,255,255,0.42)"/>
+            <!-- Pen clip: main long section (runs almost entire barrel) -->
+            <rect x="55" y="292" width="6" height="172" rx="0" fill="url(#clipG)" filter="url(#ds)"/>
+            <line x1="61" y1="292" x2="61" y2="464" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+            <!-- Measurement graduation marks on right side -->
+            <line x1="140" y1="310" x2="152" y2="310" stroke="rgba(100,100,100,0.4)" stroke-width="0.9"/>
+            <line x1="140" y1="325" x2="148" y2="325" stroke="rgba(100,100,100,0.28)" stroke-width="0.8"/>
+            <line x1="140" y1="340" x2="152" y2="340" stroke="rgba(100,100,100,0.4)" stroke-width="0.9"/>
+            <line x1="140" y1="355" x2="148" y2="355" stroke="rgba(100,100,100,0.28)" stroke-width="0.8"/>
+            <line x1="140" y1="370" x2="152" y2="370" stroke="rgba(100,100,100,0.4)" stroke-width="0.9"/>
+            <line x1="140" y1="385" x2="148" y2="385" stroke="rgba(100,100,100,0.28)" stroke-width="0.8"/>
+            <line x1="140" y1="400" x2="152" y2="400" stroke="rgba(100,100,100,0.4)" stroke-width="0.9"/>
+            <line x1="140" y1="415" x2="148" y2="415" stroke="rgba(100,100,100,0.28)" stroke-width="0.8"/>
+            <line x1="140" y1="430" x2="152" y2="430" stroke="rgba(100,100,100,0.4)" stroke-width="0.9"/>
+            <line x1="140" y1="445" x2="148" y2="445" stroke="rgba(100,100,100,0.28)" stroke-width="0.8"/>
+            <line x1="140" y1="460" x2="152" y2="460" stroke="rgba(100,100,100,0.4)" stroke-width="0.9"/>
+            <!--
+              Product label — exactly matching the real pen layout:
+              "XENOTROPIN" (bold) + description + 90IU + XENOGENIX
+            -->
+            <text x="100" y="314" text-anchor="middle"
+              fill="rgba(25,25,25,0.65)" font-size="9" font-family="Inter,sans-serif"
+              font-weight="700" letter-spacing="2">XENOTROPIN</text>
+            <text x="100" y="325" text-anchor="middle"
+              fill="rgba(55,55,55,0.42)" font-size="5.8" font-family="Inter,sans-serif"
+              letter-spacing="0.3">191 Amino Acid Chain Pre Filled Pen</text>
+            <text x="100" y="336" text-anchor="middle"
+              fill="rgba(25,25,25,0.52)" font-size="7.5" font-family="Space Mono,monospace"
+              font-weight="700" letter-spacing="1.5">90IU</text>
+            <!-- XENOGENIX X diamond logo: matches product photo exactly -->
+            <g transform="translate(83,400) scale(1.0)" opacity="0.28">
+              <polygon points="8,0 16,7 8,14 0,7" fill="none" stroke="#1a1a1a" stroke-width="1.4"/>
+              <line x1="2.5" y1="2.5" x2="13.5" y2="11.5" stroke="#1a1a1a" stroke-width="1.3"/>
+              <line x1="13.5" y1="2.5" x2="2.5"  y2="11.5" stroke="#1a1a1a" stroke-width="1.3"/>
+            </g>
+            <text x="112" y="411" fill="rgba(30,30,30,0.28)"
+              font-size="5.5" font-family="Inter,sans-serif" font-weight="700" letter-spacing="1.5">XENOGENIX</text>
+            <!-- Gleam strip -->
+            <path d="M60,292 L60,464 L74,464 L74,292 Z"
+              fill="url(#gleam)" opacity="0.35"/>
+            <!-- Top separation ring -->
+            <rect x="60" y="292" width="80" height="5" rx="0" fill="url(#ring)" opacity="0.7"/>
+            <!-- Bottom separation ring -->
+            <rect x="60" y="459" width="80" height="5" rx="0" fill="url(#ring)" opacity="0.7"/>
+            <!-- LABEL -->
+            <g class="part-label-g">
+              <line x1="144" y1="378" x2="164" y2="378" stroke="rgba(45,184,216,0.65)" stroke-width="0.9"/>
+              <circle cx="163" cy="378" r="2.2" fill="#2db8d8"/>
+              <text x="170" y="373" fill="#2db8d8" font-size="8.5" font-family="Space Mono,monospace" font-weight="700" letter-spacing="1.5">03</text>
+              <text x="170" y="384" fill="#f4f6fb" font-size="12.5" font-family="Cormorant Garamond,serif" font-style="italic">Glass Cartridge</text>
+              <text x="170" y="395" fill="#6b87aa" font-size="8" font-family="Space Mono,monospace" letter-spacing="0.5">Sterile Peptide Solution</text>
+            </g>
+          </g>
+
+          <!-- ═══════════════════════════════════════════
+               PART 4  ──  RUBBER STOPPER
+               Dark grey rubber/silicone seal.
+          ═══════════════════════════════════════════ -->
+          <g class="pen-comp" id="pc4">
+            <rect x="60" y="464" width="80" height="24" rx="2"
+              fill="url(#rub)" filter="url(#ds)"/>
+            <!-- Rubber texture rings -->
+            <rect x="60" y="464" width="80" height="6" rx="0" fill="rgba(0,0,0,0.18)"/>
+            <rect x="60" y="482" width="80" height="6" rx="0" fill="rgba(0,0,0,0.18)"/>
+            <line x1="62" y1="472" x2="138" y2="472" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+            <line x1="62" y1="477" x2="138" y2="477" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+            <!-- LABEL -->
+            <g class="part-label-g">
+              <line x1="142" y1="476" x2="164" y2="476" stroke="rgba(45,184,216,0.65)" stroke-width="0.9"/>
+              <circle cx="163" cy="476" r="2.2" fill="#2db8d8"/>
+              <text x="170" y="471" fill="#2db8d8" font-size="8.5" font-family="Space Mono,monospace" font-weight="700" letter-spacing="1.5">04</text>
+              <text x="170" y="482" fill="#f4f6fb" font-size="12.5" font-family="Cormorant Garamond,serif" font-style="italic">Rubber Stopper</text>
+              <text x="170" y="493" fill="#6b87aa" font-size="8" font-family="Space Mono,monospace" letter-spacing="0.5">Hermetic Seal</text>
+            </g>
+          </g>
+
+          <!-- ═══════════════════════════════════════════
+               PART 5  ──  DRIVE MECHANISM
+               Metallic piston rod / drive screw.
+          ═══════════════════════════════════════════ -->
+          <g class="pen-comp" id="pc5">
+            <rect x="60" y="488" width="80" height="54" rx="2"
+              fill="url(#metal)" filter="url(#ds)"/>
+            <!-- Drive rod detail -->
+            <rect x="72" y="497" width="56" height="6"  rx="1" fill="rgba(255,255,255,0.12)"/>
+            <rect x="72" y="507" width="56" height="6"  rx="1" fill="rgba(255,255,255,0.08)"/>
+            <rect x="72" y="517" width="56" height="6"  rx="1" fill="rgba(255,255,255,0.12)"/>
+            <rect x="72" y="527" width="56" height="6"  rx="1" fill="rgba(255,255,255,0.08)"/>
+            <!-- Centre spine -->
+            <line x1="100" y1="488" x2="100" y2="542" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
+            <!-- Side rack teeth -->
+            <rect x="60" y="498" width="4" height="7" fill="rgba(255,255,255,0.18)"/>
+            <rect x="60" y="510" width="4" height="7" fill="rgba(255,255,255,0.18)"/>
+            <rect x="60" y="522" width="4" height="7" fill="rgba(255,255,255,0.18)"/>
+            <rect x="136" y="498" width="4" height="7" fill="rgba(255,255,255,0.18)"/>
+            <rect x="136" y="510" width="4" height="7" fill="rgba(255,255,255,0.18)"/>
+            <rect x="136" y="522" width="4" height="7" fill="rgba(255,255,255,0.18)"/>
+            <!-- LABEL -->
+            <g class="part-label-g">
+              <line x1="142" y1="515" x2="164" y2="515" stroke="rgba(45,184,216,0.65)" stroke-width="0.9"/>
+              <circle cx="163" cy="515" r="2.2" fill="#2db8d8"/>
+              <text x="170" y="510" fill="#2db8d8" font-size="8.5" font-family="Space Mono,monospace" font-weight="700" letter-spacing="1.5">05</text>
+              <text x="170" y="521" fill="#f4f6fb" font-size="12.5" font-family="Cormorant Garamond,serif" font-style="italic">Drive Mechanism</text>
+              <text x="170" y="532" fill="#6b87aa" font-size="8" font-family="Space Mono,monospace" letter-spacing="0.5">Precision Dose Delivery</text>
+            </g>
+          </g>
+
+          <!-- ═══════════════════════════════════════════
+               PART 6  ──  DOSE DIAL
+               White outer sleeve. Light-grey dose window
+               displaying click count (matching real pen).
+          ═══════════════════════════════════════════ -->
+          <g class="pen-comp" id="pc6">
+            <rect x="58" y="542" width="84" height="64" rx="3"
+              fill="url(#cyl)" filter="url(#ds)"/>
+            <!-- Gleam -->
+            <path d="M58,542 L58,606 L72,606 L72,542 Z" fill="url(#gleam)" opacity="0.4"/>
+            <!-- Top + bottom ring separation -->
+            <rect x="58" y="542" width="84" height="5" rx="1" fill="url(#ring)" opacity="0.8"/>
+            <rect x="58" y="601" width="84" height="5" rx="1" fill="url(#ring)" opacity="0.8"/>
+            <!-- Dose display window (pale grey LCD panel — matches real pen exactly) -->
+            <rect x="76" y="552" width="48" height="28" rx="3"
+              fill="#e8e8e8" stroke="rgba(140,140,140,0.7)" stroke-width="1"/>
+            <rect x="77" y="553" width="46" height="26" rx="2"
+              fill="rgba(248,248,248,0.96)"/>
+            <!-- Dose number: dark text on light background — exactly like the real pen -->
+            <text x="100" y="571" text-anchor="middle"
+              fill="#1a1a1a" font-size="14" font-family="Space Mono,monospace" font-weight="700">27</text>
+            <text x="100" y="581" text-anchor="middle"
+              fill="rgba(80,80,80,0.55)" font-size="5.5" font-family="Space Mono,monospace" letter-spacing="1.2">CLICKS</text>
+            <!-- Dial grip lines -->
+            <line x1="60" y1="588" x2="140" y2="588" stroke="rgba(0,0,0,0.09)"  stroke-width="2"/>
+            <line x1="60" y1="594" x2="140" y2="594" stroke="rgba(0,0,0,0.07)"  stroke-width="2"/>
+            <line x1="60" y1="599" x2="140" y2="599" stroke="rgba(0,0,0,0.09)"  stroke-width="2"/>
+            <!-- LABEL -->
+            <g class="part-label-g">
+              <line x1="144" y1="566" x2="164" y2="566" stroke="rgba(45,184,216,0.65)" stroke-width="0.9"/>
+              <circle cx="163" cy="566" r="2.2" fill="#2db8d8"/>
+              <text x="170" y="561" fill="#2db8d8" font-size="8.5" font-family="Space Mono,monospace" font-weight="700" letter-spacing="1.5">06</text>
+              <text x="170" y="572" fill="#f4f6fb" font-size="12.5" font-family="Cormorant Garamond,serif" font-style="italic">Dose Dial</text>
+              <text x="170" y="583" fill="#6b87aa" font-size="8" font-family="Space Mono,monospace" letter-spacing="0.5">Click-Dose Selector</text>
+            </g>
+          </g>
+
+          <!-- ═══════════════════════════════════════════
+               PART 7  ──  END CAP
+               Smooth white dome — matches product photo.
+               Same rounded shape as the needle cap, inverted.
+          ═══════════════════════════════════════════ -->
+          <g class="pen-comp" id="pc7">
+            <!--
+              Smooth dome: rectangle at top (y=606),
+              curving down to a dome at y=650.
+            -->
+            <path d="M60,606 L60,630 Q60,655 100,658 Q140,655 140,630 L140,606 Z"
+              fill="url(#cylN)" filter="url(#ds)"/>
+            <!-- Gleam strip -->
+            <path d="M60,606 L60,630 Q60,642 68,650 L68,606 Z"
+              fill="url(#gleam)" opacity="0.5"/>
+            <!-- Grip lines on end cap -->
+            <line x1="62" y1="614" x2="138" y2="614" stroke="rgba(0,0,0,0.09)"  stroke-width="1.8"/>
+            <line x1="62" y1="622" x2="138" y2="622" stroke="rgba(0,0,0,0.07)"  stroke-width="1.8"/>
+            <line x1="62" y1="630" x2="138" y2="630" stroke="rgba(0,0,0,0.07)"  stroke-width="1.8"/>
+            <!-- Concentric click circles (back dome detail) -->
+            <circle cx="100" cy="642" r="10"  fill="rgba(180,180,180,0.35)"/>
+            <circle cx="100" cy="642" r="6"   fill="rgba(165,165,165,0.45)"/>
+            <circle cx="100" cy="642" r="2.5" fill="rgba(140,140,140,0.55)"/>
+            <!-- Clip attachment at back (the spring of the pen clip) -->
+            <path d="M55,606 L55,630 Q55,636 58,640 L58,606 Z"
+              fill="url(#clipG)" opacity="0.9"/>
+            <!-- LABEL -->
+            <g class="part-label-g">
+              <line x1="142" y1="628" x2="164" y2="628" stroke="rgba(45,184,216,0.65)" stroke-width="0.9"/>
+              <circle cx="163" cy="628" r="2.2" fill="#2db8d8"/>
+              <text x="170" y="623" fill="#2db8d8" font-size="8.5" font-family="Space Mono,monospace" font-weight="700" letter-spacing="1.5">07</text>
+              <text x="170" y="634" fill="#f4f6fb" font-size="12.5" font-family="Cormorant Garamond,serif" font-style="italic">Click-Stop Cap</text>
+              <text x="170" y="645" fill="#6b87aa" font-size="8" font-family="Space Mono,monospace" letter-spacing="0.5">End Actuator</text>
+            </g>
+          </g>
+
+        </svg><!-- /pen-svg -->
+
+      </div><!-- /pen-wrapper -->
+    </div><!-- /hero-pen-col -->
+  </div><!-- /hero-layout -->
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE 1 -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack1"></div>
+</div>
+
+<!-- ══════════════════════════ -->
+<!-- CHAPTER 1 — THE SCIENCE    -->
+<!-- ══════════════════════════ -->
+<span class="ch" id="ch-science"></span>
+<div class="chapter-card dark">
+  <div class="chapter-bg-glow" style="background:radial-gradient(ellipse 50% 60% at 70% 50%,rgba(45,184,216,0.07) 0%,transparent 65%)"></div>
+  <div class="ch-inner reveal">
+    <div class="ch-num">01 — The Science</div>
+    <h2 class="ch-title">
+      Built on<br>five <em>non-negotiables.</em>
+    </h2>
+    <p class="ch-subtitle">
+      Every compound in the NGE catalogue is engineered against a single standard: measurable, cellular-level impact. No noise. No filler. Pure science.
+    </p>
+  </div>
+</div>
+
+<div class="science-intro">
+  <div class="science-grid" data-stagger>
+
+    <div class="science-card reveal">
+      <div class="science-card-num">01</div>
+      <div class="science-card-icon">◎</div>
+      <div class="science-card-title">Targeted Results</div>
+      <p class="science-card-text">
+        Peptides don't carpet-bomb your system — they dock precisely onto receptor sites, triggering exact biological responses. Where synthetic hormones flood indiscriminately, peptides whisper to specific cells. This is the difference between a blunt instrument and a scalpel.
+      </p>
+    </div>
+
+    <div class="science-card reveal">
+      <div class="science-card-num">02</div>
+      <div class="science-card-icon">↻</div>
+      <div class="science-card-title">Faster Recovery</div>
+      <p class="science-card-text">
+        Recovery is performance. BPC-157 accelerates angiogenesis and tendon-to-bone healing. TB-500 drives actin polymerisation for tissue repair across the body. The Wolverine stack combines both for an acute healing response that athletes used to only dream about.
+      </p>
+    </div>
+
+    <div class="science-card reveal">
+      <div class="science-card-num">03</div>
+      <div class="science-card-icon">⬡</div>
+      <div class="science-card-title">Clinically Studied</div>
+      <p class="science-card-text">
+        GLP-1 agonists like Semaglutide and Tirzepatide have extensive Phase III trial data. NAD+ precursors are the subject of landmark longevity research at institutions including MIT. GHK-Cu's wound-healing mechanisms are documented across decades of peer-reviewed literature.
+      </p>
+    </div>
+
+    <div class="science-card reveal">
+      <div class="science-card-num">04</div>
+      <div class="science-card-icon">▲</div>
+      <div class="science-card-title">Peak Performance</div>
+      <p class="science-card-text">
+        MOTS-C activates the skeletal muscle AMPK pathway — the same mechanism triggered by exercise — dramatically improving glucose uptake and endurance capacity. Xenotropin's growth hormone triggers IGF-1 cascades that drive protein synthesis, lean mass, and neural recovery simultaneously.
+      </p>
+    </div>
+
+    <div class="science-card full reveal">
+      <div class="science-card-num">05</div>
+      <div class="science-card-icon">∞</div>
+      <div class="science-card-title">Longevity &amp; Wellness</div>
+      <p class="science-card-text">
+        The science of healthspan — not just lifespan — is advancing rapidly. NAD+ restoration reverses mitochondrial senescence markers in preclinical models. GHK-Cu reactivates over 4,000 genes involved in tissue repair and inflammation resolution. Tesamorelin actively reduces visceral adipose tissue, one of the strongest independent predictors of metabolic disease. NGE formulates with this science in mind.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- BIG STAT -->
+<div class="big-stat">
+  <div class="big-stat-number reveal"><span>99</span>%<span>+</span></div>
+  <div class="big-stat-label reveal">pharmaceutical purity — every batch, every compound</div>
+</div>
+
+<!-- DELIVERY FORMATS -->
+<div class="formats-section">
+  <div class="formats-inner">
+    <div class="formats-heading reveal">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;">Delivery Systems</div>
+        <h2>Three formats.<br><em>One standard.</em></h2>
+      </div>
+      <p>From precision pre-filled pens to reconstitutable vials and needle-free nasal sprays — every format is engineered with the same commitment to purity, potency, and protocol.</p>
+    </div>
+    <div class="formats-grid" data-stagger>
+      <div class="format-card pen-card">
+        <div class="format-icon">💉</div>
+        <div class="format-label">Format 01</div>
+        <div class="format-title">Pre-Filled Pens</div>
+        <p class="format-desc">Pharmaceutical-grade multidose pens pre-loaded with precision-dosed peptide solution. No mixing. No measuring. Each click delivers an exact dose.</p>
+        <ul class="format-points">
+          <li>Ready-to-use subcutaneous delivery</li>
+          <li>Fixed dose-per-click accuracy</li>
+          <li>Cold-chain maintained from manufacture</li>
+          <li>Discreet, travel-friendly format</li>
+        </ul>
+        <div class="format-count"><span>10</span> <span class="format-count-label">Compounds</span></div>
+      </div>
+      <div class="format-card vial-card">
+        <div class="format-icon">🧪</div>
+        <div class="format-label">Format 02</div>
+        <div class="format-title">Self-Mix Vials</div>
+        <p class="format-desc">Lyophilised (freeze-dried) peptide powder supplied with bacteriostatic water for reconstitution. Clinical-grade flexibility for custom dosing.</p>
+        <ul class="format-points">
+          <li>Lyophilised for maximum shelf stability</li>
+          <li>Paired with bacteriostatic water</li>
+          <li>Full clinical dose flexibility</li>
+          <li>Preferred by practitioners & researchers</li>
+        </ul>
+        <div class="format-count"><span>9</span> <span class="format-count-label">Compounds</span></div>
+      </div>
+      <div class="format-card nasal-card">
+        <div class="format-icon">💧</div>
+        <div class="format-label">Format 03</div>
+        <div class="format-title">Nasal Sprays</div>
+        <p class="format-desc">Needle-free trans-nasal peptide delivery for daily micro-dose protocols. Rapid mucosal absorption with no injection required.</p>
+        <ul class="format-points">
+          <li>Zero-injection delivery</li>
+          <li>Precise spray-per-dose metering</li>
+          <li>Ideal for nootropics & daily protocols</li>
+          <li>10 ml bottles, 90-day use window</li>
+        </ul>
+        <div class="format-count"><span>5</span> <span class="format-count-label">Compounds</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUALITY STRIP -->
+<div class="quality-strip">
+  <div class="quality-inner" data-stagger>
+    <div class="quality-cell">
+      <div class="quality-num"><span>99</span>%<span>+</span></div>
+      <div class="quality-label">Purity Grade</div>
+    </div>
+    <div class="quality-cell">
+      <div class="quality-num"><span>24</span></div>
+      <div class="quality-label">Total Compounds</div>
+    </div>
+    <div class="quality-cell">
+      <div class="quality-num"><span>3</span></div>
+      <div class="quality-label">Delivery Formats</div>
+    </div>
+    <div class="quality-cell">
+      <div class="quality-num">R<span>100</span></div>
+      <div class="quality-label">Standard Delivery (Free over R3k)</div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE 2 -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack2" style="animation-direction:reverse"></div>
+</div>
+
+<!-- ══════════════════════════ -->
+<!-- CHAPTER 2 — PRE-FILLED PENS -->
+<!-- ══════════════════════════ -->
+<span class="ch" id="ch-pens"></span>
+<div class="chapter-card deep">
+  <div class="chapter-bg-glow" style="background:radial-gradient(ellipse 60% 60% at 30% 60%,rgba(45,184,216,0.08) 0%,transparent 65%)"></div>
+  <div class="ch-inner reveal">
+    <div class="ch-num">02 — Pre-Filled Pens</div>
+    <h2 class="ch-title">
+      Precision in<br>every <em>click.</em>
+    </h2>
+    <p class="ch-subtitle">
+      Ten pharmaceutical-grade multidose pens. No mixing. No measuring. Each pen delivers an exact, subcutaneous dose — ready to use, from the moment you uncap it.
+    </p>
+  </div>
+</div>
+
+<!-- PEN SPOTLIGHT: Xenotropin -->
+<div class="cat-banner pen-bg">
+  <div class="cat-banner-inner">
+    <div class="reveal-left">
+      <div class="cat-banner-tag">Flagship Pen · HGH</div>
+      <h2>The <em>Original</em><br>Growth Hormone Pen.</h2>
+      <p>Xenotropin is 191-amino-acid recombinant human growth hormone — identical to endogenous GH — in a precision multidose pre-filled pen. The foundation of every serious longevity and body composition protocol.</p>
+      <div class="cat-badge-row">
+        <span class="cat-badge pen">PRE-FILLED PEN</span>
+        <span class="cat-badge pen">90 IU</span>
+        <span class="cat-badge pen">98% PURITY</span>
+        <span class="cat-badge pen">SWISS ORIGIN</span>
+      </div>
+    </div>
+    <div class="cat-banner-right reveal-right" data-stagger>
+      <div class="cat-mini-stat"><div class="cat-mini-num">90<span>IU</span></div><div class="cat-mini-label">Dose per pen</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num">98<span>%</span></div><div class="cat-mini-label">Purity grade</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num">191</div><div class="cat-mini-label">Amino acid chain</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num"><span>R</span>2,500</div><div class="cat-mini-label">ZAR per pen</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Xenotropin Spotlight -->
+<div class="spotlight pen-bg" style="padding-top:0">
+  <div class="spotlight-inner reveal-scale">
+    <div class="spotlight-img">
+      <img src="Xenotropin pen.jpeg" alt="Xenotropin" onerror="this.parentElement.style.background='#0a1a2e'">
+    </div>
+    <div class="spotlight-body">
+      <div class="spotlight-eyebrow">HGH · 191 Amino Acid Chain</div>
+      <div class="spotlight-name">Xenotropin</div>
+      <div class="spotlight-dose">90 IU · 98% Purity · Pre-Filled Pen</div>
+      <p class="spotlight-desc">Pharmaceutical-grade recombinant human growth hormone in a multidose pre-filled pen. Supports lean mass accumulation, deep sleep architecture, cellular repair and systemic regeneration — the cornerstone compound for anyone serious about longevity and performance.</p>
+      <ul class="spotlight-feats">
+        <li>Lean muscle &amp; body composition optimisation</li>
+        <li>Deeper sleep architecture &amp; recovery</li>
+        <li>Cellular repair, IGF-1 stimulation &amp; longevity</li>
+      </ul>
+      <div class="spotlight-footer">
+        <div class="spotlight-price"><sup>R</sup>2,500<sub>ZAR</sub></div>
+        <a href="ngp-peptides.html" class="btn-spot">View in Catalogue</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Xenotropin Protocol -->
+<div class="protocol-section">
+  <div class="protocol-inner">
+    <div class="protocol-left reveal-left">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;">Dosage Protocol</div>
+      <h3>The Xenotropin <em>Protocol.</em></h3>
+      <p style="margin-bottom:20px">A tiered approach aligned with natural GH pulses — always administered subcutaneously, preferably at bedtime or immediately post-workout.</p>
+      <div class="protocol-warning">⚠ Monitor fasting glucose and IGF-1 levels regularly. Do not use if you have active malignancy. Consult a qualified practitioner before use.</div>
+    </div>
+    <div class="protocol-right reveal-right" data-stagger>
+      <div class="protocol-step"><div class="step-num">1</div><div class="step-text">Starting dose: 1–2 clicks subcutaneous injection daily</div></div>
+      <div class="protocol-step"><div class="step-num">2</div><div class="step-text">Intermediate: 2–3 clicks/day for body composition goals</div></div>
+      <div class="protocol-step"><div class="step-num">3</div><div class="step-text">Advanced use: up to 4 clicks/day under medical supervision</div></div>
+      <div class="protocol-step"><div class="step-num">4</div><div class="step-text">Inject subcutaneously in the abdomen, thigh, or upper arm</div></div>
+      <div class="protocol-step"><div class="step-num">5</div><div class="step-text">Best administered before bed or immediately post-workout</div></div>
+      <div class="protocol-step"><div class="step-num">6</div><div class="step-text">Recommended cycle: 3–6 months on, 1 month off</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Full Pen Catalogue -->
+<div class="product-strip" style="background:var(--deep);padding-top:80px">
+  <div class="strip-heading reveal">
+    <div class="strip-label">All Pre-Filled Pens · 10 Compounds</div>
+    <div class="strip-count">Complete Pen Range</div>
+  </div>
+  <div class="product-grid-strip" id="penGrid" data-stagger></div>
+</div>
+
+<!-- PULL QUOTE 1 -->
+<div class="pull-quote">
+  <span class="pull-quote-mark">"</span>
+  <div class="pull-quote-text reveal">
+    Recovery is not the absence of damage —<br>it is the <em>speed of repair.</em>
+  </div>
+  <div class="pull-quote-source reveal">The Wolverine Stack · BPC-157 + TB-500</div>
+</div>
+
+<!-- ══════════════════════════ -->
+<!-- CHAPTER 3 — SELF-MIX VIALS -->
+<!-- ══════════════════════════ -->
+<span class="ch" id="ch-vials"></span>
+<div class="chapter-card dark">
+  <div class="chapter-bg-glow" style="background:radial-gradient(ellipse 50% 60% at 70% 40%,rgba(200,169,110,0.07) 0%,transparent 65%)"></div>
+  <div class="ch-inner reveal">
+    <div class="ch-num">03 — Self-Mix Vials</div>
+    <h2 class="ch-title">
+      Clinical precision.<br><em>Full flexibility.</em>
+    </h2>
+    <p class="ch-subtitle">
+      Nine lyophilised peptide compounds, each supplied with bacteriostatic water. Reconstitute to your protocol, dose with precision. The format preferred by clinicians and researchers.
+    </p>
+  </div>
+</div>
+
+<!-- Vial Banner: Retatrutide -->
+<div class="cat-banner vial-bg">
+  <div class="cat-banner-inner">
+    <div class="reveal-left">
+      <div class="cat-banner-tag" style="color:var(--gold)">Flagship Vial · Tri-Agonist</div>
+      <h2>The Triple-<em>Action</em><br>Metabolic Revolution.</h2>
+      <p>Retatrutide is the world's most advanced incretin — simultaneously activating GLP-1, GIP, and Glucagon receptors. Clinical trials demonstrated up to 24% body weight reduction in 48 weeks. Available in both vial and pen format.</p>
+      <div class="cat-badge-row">
+        <span class="cat-badge vial">SELF-MIX VIAL</span>
+        <span class="cat-badge vial">32MG</span>
+        <span class="cat-badge vial">TRI-AGONIST</span>
+      </div>
+    </div>
+    <div class="cat-banner-right reveal-right" data-stagger>
+      <div class="cat-mini-stat"><div class="cat-mini-num">32<span>mg</span></div><div class="cat-mini-label">Dose per vial</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num"><span>3</span>×</div><div class="cat-mini-label">Receptor pathways</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num">16<span>mg/ml</span></div><div class="cat-mini-label">Final concentration</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num"><span>R</span>1,900</div><div class="cat-mini-label">ZAR per vial</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Retatrutide Spotlight -->
+<div class="spotlight vial-bg" style="padding-top:0">
+  <div class="spotlight-inner reveal-scale">
+    <div class="spotlight-img">
+      <img src="Retatrutide vial.jpeg" alt="Retatrutide Vial" onerror="this.parentElement.style.background='#0a1a2e'">
+    </div>
+    <div class="spotlight-body">
+      <div class="spotlight-eyebrow">GLP-1 / GIP / Glucagon Tri-Agonist</div>
+      <div class="spotlight-name">Retatrutide Vial</div>
+      <div class="spotlight-dose">32 mg · 2 ml Self-Mix Vial · 16 mg/ml</div>
+      <p class="spotlight-desc">The most advanced incretin tri-agonist in a flexible self-mix format. While Semaglutide targets one receptor and Tirzepatide targets two, Retatrutide simultaneously activates GLP-1, GIP, and Glucagon receptors — driving unprecedented fat loss, appetite suppression, and metabolic restoration.</p>
+      <ul class="spotlight-feats">
+        <li>Triple-pathway metabolic action</li>
+        <li>Significant fat loss &amp; appetite control</li>
+        <li>Improves glucose &amp; cardiovascular markers</li>
+      </ul>
+      <div class="spotlight-footer">
+        <div class="spotlight-price"><sup>R</sup>1,900<sub>ZAR</sub></div>
+        <a href="ngp-peptides.html" class="btn-spot">View in Catalogue</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Vial Reconstitution Protocol -->
+<div class="protocol-section" style="background:var(--black)">
+  <div class="protocol-inner">
+    <div class="protocol-left reveal-left">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Reconstitution Guide</div>
+      <h3>Mixing with <em>Precision.</em></h3>
+      <p style="margin-bottom:20px">Every self-mix vial is supplied with 2 ml bacteriostatic water. The reconstitution process is simple — and critical for preserving peptide integrity.</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.75">The golden rule: never shake. Shaking creates shear forces that break peptide chains. Always swirl gently. Inject bacteriostatic water down the vial wall, not directly onto the powder.</p>
+    </div>
+    <div class="protocol-right reveal-right" data-stagger>
+      <div class="protocol-step"><div class="step-num">1</div><div class="step-text">Draw 2 ml of bacteriostatic water into a syringe</div></div>
+      <div class="protocol-step"><div class="step-num">2</div><div class="step-text">Inject slowly down the inside wall of the vial — do not spray directly onto powder</div></div>
+      <div class="protocol-step"><div class="step-num">3</div><div class="step-text">Swirl gently until fully dissolved — never shake or vortex</div></div>
+      <div class="protocol-step"><div class="step-num">4</div><div class="step-text">Allow to sit 2–3 minutes if powder does not dissolve immediately</div></div>
+      <div class="protocol-step"><div class="step-num">5</div><div class="step-text">Refrigerate immediately after reconstitution — use within the stated window</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Horizontal scroll — vial showcase -->
+<div class="hscroll-section" style="background:var(--deep)">
+  <div class="hscroll-label">Self-Mix Vials · 9 Compounds</div>
+  <div class="hscroll-track" id="vialScroll"></div>
+</div>
+
+<!-- Full Vial Grid -->
+<div class="product-strip" style="background:var(--deep);padding-top:48px">
+  <div class="strip-heading reveal">
+    <div class="strip-label">All Self-Mix Vials · 9 Compounds</div>
+    <div class="strip-count">Complete Vial Range</div>
+  </div>
+  <div class="product-grid-strip" id="vialGrid" data-stagger></div>
+</div>
+
+<!-- PULL QUOTE 2 -->
+<div class="pull-quote" style="background:var(--black)">
+  <span class="pull-quote-mark">"</span>
+  <div class="pull-quote-text reveal">
+    The future of fat loss is not willpower —<br>it is <em>molecular signaling.</em>
+  </div>
+  <div class="pull-quote-source reveal">Retatrutide · GLP-1/GIP/Glucagon Tri-Agonist</div>
+</div>
+
+<!-- ══════════════════════════ -->
+<!-- CHAPTER 4 — NASAL SPRAYS  -->
+<!-- ══════════════════════════ -->
+<span class="ch" id="ch-nasals"></span>
+<div class="chapter-card deep">
+  <div class="chapter-bg-glow" style="background:radial-gradient(ellipse 50% 60% at 40% 50%,rgba(120,160,220,0.07) 0%,transparent 65%)"></div>
+  <div class="ch-inner reveal">
+    <div class="ch-num">04 — Nasal Sprays</div>
+    <h2 class="ch-title">
+      No needles.<br><em>No limits.</em>
+    </h2>
+    <p class="ch-subtitle">
+      Five trans-nasal peptide formulations for needle-free daily protocols. From cognitive sharpening to deep-tan induction — nasal delivery brings peptides to everyone.
+    </p>
+  </div>
+</div>
+
+<!-- Nasal Banner: Semax + Selank -->
+<div class="cat-banner nasal-bg">
+  <div class="cat-banner-inner">
+    <div class="reveal-left">
+      <div class="cat-banner-tag" style="color:#7fa8dc">Nootropic Pair · BDNF · GABA</div>
+      <h2>The Cognitive<br><em>Upgrade Stack.</em></h2>
+      <p>Semax elevates BDNF — brain-derived neurotrophic factor — driving neuroplasticity, focus, and memory under load. Selank modulates GABA and serotonin pathways for calm, sustained concentration without sedation. Together, they are the modern professional's cognitive protocol.</p>
+      <div class="cat-badge-row">
+        <span class="cat-badge nasal">NASAL SPRAY</span>
+        <span class="cat-badge nasal">10ML · 10MG</span>
+        <span class="cat-badge nasal">NEEDLE-FREE</span>
+      </div>
+    </div>
+    <div class="cat-banner-right reveal-right" data-stagger>
+      <div class="cat-mini-stat"><div class="cat-mini-num">10<span>mg</span></div><div class="cat-mini-label">Semax per bottle</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num">10<span>mg</span></div><div class="cat-mini-label">Selank per bottle</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num">90<span>d</span></div><div class="cat-mini-label">Use window once opened</div></div>
+      <div class="cat-mini-stat"><div class="cat-mini-num"><span>R</span>800</div><div class="cat-mini-label">Each · ZAR</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Semax Spotlight -->
+<div class="spotlight nasal-bg" style="padding-top:0">
+  <div class="spotlight-inner reveal-scale">
+    <div class="spotlight-img">
+      <img src="Semax Nasal.jpeg" alt="Semax Nasal" onerror="this.parentElement.style.background='#0a1a2e'">
+    </div>
+    <div class="spotlight-body">
+      <div class="spotlight-eyebrow">Nootropic / Neuroprotective Peptide</div>
+      <div class="spotlight-name">Semax</div>
+      <div class="spotlight-dose">10 ml · 10 mg Nasal Spray</div>
+      <p class="spotlight-desc">Developed by the Russian Academy of Sciences for cosmonauts and high-performance professionals. Semax is an ACTH-4-7 analogue that dramatically upregulates BDNF — the key driver of neuroplasticity. Sharper focus, better memory consolidation, and genuine cognitive resilience under pressure.</p>
+      <ul class="spotlight-feats">
+        <li>Sharper focus &amp; working memory</li>
+        <li>Elevated BDNF &amp; neuroplasticity</li>
+        <li>Cognitive resilience under stress</li>
+      </ul>
+      <div class="spotlight-footer">
+        <div class="spotlight-price"><sup>R</sup>800<sub>ZAR</sub></div>
+        <a href="ngp-peptides.html" class="btn-spot">View in Catalogue</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Full Nasal Grid -->
+<div class="product-strip" style="background:var(--deep);padding-top:80px">
+  <div class="strip-heading reveal">
+    <div class="strip-label">All Nasal Sprays · 5 Compounds</div>
+    <div class="strip-count">Complete Nasal Range</div>
+  </div>
+  <div class="product-grid-strip" id="nasalGrid" data-stagger></div>
+</div>
+
+<!-- WHY NGE section -->
+<div class="why-fullbleed">
+  <div class="why-inner">
+    <div class="why-heading reveal">
+      <div class="section-tag">Why NGE</div>
+      <h2>Five <em>non-negotiables.</em></h2>
+    </div>
+    <div class="why-cards" data-stagger>
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <div class="why-icon">◎</div>
+        <div class="why-title">Targeted Results</div>
+        <p class="why-text">Peptides work at the cellular level for maximum, precise impact.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <div class="why-icon">↻</div>
+        <div class="why-title">Faster Recovery</div>
+        <p class="why-text">Reduce downtime and bounce back stronger after every session.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <div class="why-icon">⬡</div>
+        <div class="why-title">Clinically Studied</div>
+        <p class="why-text">Backed by science and trusted by performance professionals.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">04</div>
+        <div class="why-icon">▲</div>
+        <div class="why-title">Peak Performance</div>
+        <p class="why-text">Optimize strength, endurance, and overall vitality.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">05</div>
+        <div class="why-icon">∞</div>
+        <div class="why-title">Longevity &amp; Wellness</div>
+        <p class="why-text">Support long-term health, youth, and lifespan extension.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE 3 -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack3"></div>
+</div>
+
+<!-- PULL QUOTE 3 -->
+<div class="pull-quote" style="background:var(--deep)">
+  <span class="pull-quote-mark">"</span>
+  <div class="pull-quote-text reveal">
+    The mind is not separate from the body.<br>It is the <em>first system to optimise.</em>
+  </div>
+  <div class="pull-quote-source reveal">Semax · Selank · Nasal Nootropic Stack</div>
+</div>
+
+<!-- ══════════════════════════ -->
+<!-- CHAPTER 5 — FINAL CTA     -->
+<!-- ══════════════════════════ -->
+<span class="ch" id="ch-cta"></span>
+<div class="final-cta">
+  <div class="final-cta-inner reveal">
+    <div class="final-cta-tag">Unlock Your Full Potential</div>
+    <h2>Performance is<br>a <em>protocol.</em></h2>
+    <p>
+      Speak with our team about wholesale, clinical partnerships, athlete protocols, or to place your order. NGE delivers nationwide across South Africa — R100 flat rate, free on orders over R3,000.
+    </p>
+    <div class="cta-btns">
+      <a href="ngp-peptides.html" class="btn-prim">Shop the Catalogue</a>
+      <a href="ngp-peptides.html#contact" class="btn-ghost">Contact NGE</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="NGE Transparent logo.png" alt="NGE" onerror="this.style.display='none'">
+      <div>
+        <div class="footer-name">NGE</div>
+        <div class="footer-tagline">Next Gen Evolution · Science · Strength · Transformation</div>
+      </div>
+    </div>
+    <div class="footer-right">
+      For research and clinical use only. Not for human consumption without medical supervision.<br>
+      © 2026 NGE — Next Gen Peptides. All rights reserved.<br>
+      <a href="ngp-peptides.html">Main Catalogue</a>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/27000000000" class="wa-btn" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  WhatsApp
+</a>
+
+<script>
+// ── SCROLL PROGRESS ──
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('scroll-progress').style.width = pct + '%';
+});
+
+// ── NAV ACTIVE STATE ──
+const chapters = ['ch-science','ch-pens','ch-vials','ch-nasals','ch-cta'];
+const chLinks  = {
+  science: document.querySelector('[data-chapter="science"]'),
+  pens:    document.querySelector('[data-chapter="pens"]'),
+  vials:   document.querySelector('[data-chapter="vials"]'),
+  nasals:  document.querySelector('[data-chapter="nasals"]'),
+  cta:     document.querySelector('[data-chapter="cta"]'),
+};
+const chEls = {};
+chapters.forEach(id => { chEls[id] = document.getElementById(id); });
+
+function updateNavActive() {
+  const scrollY = window.scrollY + 120;
+  let active = null;
+  chapters.forEach(id => {
+    if (chEls[id] && chEls[id].getBoundingClientRect().top + window.scrollY <= scrollY) {
+      active = id.replace('ch-','');
+    }
+  });
+  Object.values(chLinks).forEach(el => el && el.classList.remove('active'));
+  if (active && chLinks[active]) chLinks[active].classList.add('active');
+}
+window.addEventListener('scroll', updateNavActive, { passive: true });
+
+// ── INTERSECTION OBSERVER for reveal animations ──
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, [data-stagger]')
+  .forEach(el => io.observe(el));
+
+// ── PRODUCT DATA ──
+const products = [
+  // PENS
+  { id:1, type:'pen', img:'Xenotropin pen.jpeg', category:'HGH · 191 Amino Acid Chain', name:'Xenotropin', dose:'90 IU · 98% Purity', desc:'Pharmaceutical-grade recombinant human growth hormone in a multidose pre-filled pen.', features:['Lean muscle & body composition','Deeper sleep & recovery','Cellular repair & longevity'], price:2500 },
+  { id:2, type:'pen', img:'Retatrutide 32mg Pen.jpeg', category:'GLP-1 / GIP / Glucagon Tri-Agonist', name:'Retatrutide 32MG', dose:'32 mg Pre-Filled Pen', desc:'The most advanced GLP/GIP/Glucagon tri-agonist available.', features:['Triple-pathway metabolic action','Significant fat loss & appetite control','Improves glucose & cardiovascular markers'], price:2200 },
+  { id:3, type:'pen', img:'Tirzepatide pen.jpeg', category:'GLP-1 / GIP Dual Agonist', name:'Tirzepatide Pen', dose:'30 mg Pre-Filled Pen', desc:'Dual incretin signaling in a convenient pre-filled pen.', features:['Dual GLP-1 + GIP action','Powerful appetite control','Enhanced insulin sensitivity'], price:2000 },
+  { id:4, type:'pen', img:'Wolverine 32mg pen.jpeg', category:'TB-500 + BPC-157 Healing Blend', name:'Wolverine', dose:'32 mg · 16mg TB-500 + 16mg BPC-157', desc:'The legendary regenerative stack in a single pen.', features:['Combined TB-500 + BPC-157 healing','Accelerates recovery & reduces downtime','Muscle, tendon, ligament & gut health'], price:1700 },
+  { id:5, type:'pen', img:'Delta recover 27mg pen.jpeg', category:'DSIP · CJC-1295 · BPC-157', name:'Delta Recover', dose:'27 mg Pre-Filled Pen', desc:'A precision-blended nighttime recovery formula.', features:['Deep restorative delta sleep','Natural GH pulse via CJC-1295','Overnight tissue & gut healing'], price:1700 },
+  { id:6, type:'pen', img:'Kisspeptin-10 Pen.jpeg', category:'Hypothalamic Signaling Peptide', name:'Kisspeptin-10', dose:'10 mg Pre-Filled Pen', desc:'Activates the HPG axis — the master regulator of LH, FSH, and testosterone.', features:['Stimulates natural testosterone','Restores reproductive signaling','Libido & hormonal vitality'], price:1350 },
+  { id:7, type:'pen', img:'MOTS-C 60mg pen.jpeg', category:'Mitochondrial Peptide', name:'MOTS-C', dose:'60 mg / 3 ml Pre-Filled Pen', desc:'Mitochondrial-derived peptide that ignites cellular energy.', features:['Boosts mitochondrial function & energy','Improves insulin sensitivity','Endurance & cellular longevity'], price:1200 },
+  { id:8, type:'pen', img:'NAD+ Pen.jpeg', category:'Nicotinamide Adenine Dinucleotide', name:'NAD+', dose:'1000 mg Pre-Filled Pen', desc:'The fuel behind every cell. Restores mitochondrial output and sharpens cognition.', features:['Cellular energy & repair','Cognitive clarity & focus','Anti-aging at the mitochondrial level'], price:1300 },
+  { id:9, type:'pen', img:'GHK-Cu Pen.jpeg', category:'Copper Peptide · Regenerative', name:'GHK-CU Pen', dose:'60 mg Pre-Filled Pen', desc:'Copper-bound tripeptide in a pre-filled pen for daily precision dosing.', features:['Skin elasticity & collagen synthesis','Hair follicle stimulation','Wound healing & anti-inflammatory'], price:850 },
+  // VIALS
+  { id:10, type:'vial', img:'NAD+ Vial.jpeg', category:'Nicotinamide Adenine Dinucleotide', name:'NAD+ Vial', dose:'1000 mg · 2 ml Self-Mix Vial', desc:'Reconstitutable NAD+ for clinical and research protocols.', features:['Mitochondrial energy production','Cellular & DNA repair','Cognitive and metabolic vitality'], price:1200 },
+  { id:11, type:'vial', img:'Semaglutide vial.jpeg', category:'GLP-1 Receptor Agonist', name:'Semaglutide', dose:'7 mg / 2 ml Self-Mix Vial', desc:'The benchmark GLP-1 for sustained fat loss and glycemic control.', features:['Appetite suppression & satiety','Improved A1C & glucose control','Steady, sustainable fat loss'], price:1200 },
+  { id:12, type:'vial', img:'tirzepatide-vial.jpeg', category:'GLP-1 / GIP Dual Agonist', name:'Tirzepatide', dose:'32 mg Self-Mix Vial', desc:'Dual incretin signaling for superior fat loss and metabolic recomposition.', features:['Dual GLP-1 + GIP action','Powerful appetite control','Enhanced insulin sensitivity'], price:1700 },
+  { id:13, type:'vial', img:'CJC-1295+Ipamorelin vial.jpeg', category:'GHRH + GHRP Synergy', name:'CJC-1295 + Ipamorelin', dose:'10 mg · 5mg + 5mg', desc:'Classic anti-aging GH-boosting stack. Pulsatile growth hormone release.', features:['Natural pulsatile GH release','Improved recovery & sleep','Lean mass & fat oxidation'], price:600 },
+  { id:14, type:'vial', img:'Wolverine stack vial.jpeg', category:'TB-500 + BPC-157', name:'Wolverine Stack', dose:'10 mg · 5mg TB-500 + 5mg BPC-157', desc:'The original Wolverine healing stack in a self-mix vial.', features:['Accelerated tissue regeneration','Gut and joint protection','Reduced systemic inflammation'], price:750 },
+  { id:15, type:'vial', img:'Tesamorelin vial.jpeg', category:'GHRH Analog', name:'Tesamorelin', dose:'30 mg Self-Mix Vial', desc:'Potent GHRH analog targeting visceral fat reduction and metabolic recomposition.', features:['Reduces visceral adipose tissue','Stimulates endogenous GH','Improves lipid profile'], price:1650 },
+  { id:16, type:'vial', img:'MOTS-C vial.jpeg', category:'Mitochondrial Peptide', name:'MOTS-C Vial', dose:'10 mg · 5000 mcg/ml Self-Mix Vial', desc:'Mitochondrial-derived peptide in a precision self-mix vial.', features:['Boosts mitochondrial output & energy','Improves insulin sensitivity','Endurance & cellular longevity'], price:550 },
+  { id:17, type:'vial', img:'Retatrutide vial.jpeg', category:'GLP-1 / GIP / Glucagon Tri-Agonist', name:'Retatrutide Vial', dose:'32 mg · 2 ml Self-Mix Vial', desc:'The most advanced incretin tri-agonist in a flexible self-mix vial format.', features:['Triple-pathway metabolic action','Significant fat loss & appetite control','Improves glucose & cardiovascular markers'], price:1900 },
+  { id:24, type:'vial', img:'Retirzepatide vial.jpeg', category:'Retatrutide + Tirzepatide Dual Stack', name:'Retirzepatide', dose:'35 mg · 20mg Retatrutide + 15mg Tirzepatide', desc:'The most powerful incretin combination — stacking tri-agonist and dual-agonist for maximum results.', features:['Dual + triple incretin synergy','Maximum fat loss & appetite control','Advanced glucose & metabolic recomposition'], price:2200 },
+  { id:18, type:'vial', img:'GHK-Cu - vial.jpeg', category:'Copper Peptide · Regenerative', name:'GHK-CU', dose:'60 mg · 2 ml Self-Mix Vial', desc:'Copper-bound tripeptide that drives collagen synthesis and tissue regeneration.', features:['Skin elasticity & collagen synthesis','Hair follicle stimulation','Wound healing & anti-inflammatory'], price:800 },
+  // NASALS
+  { id:19, type:'nasal', img:'GHK-Cu 50mg nasal.png', category:'Copper Peptide · Regenerative', name:'GHK-CU Nasal', dose:'10 ml · 50 mg Nasal Spray', desc:'Daily needle-free regenerative protocol for skin, hair, and systemic tissue support.', features:['Skin & hair regeneration','Anti-inflammatory support','Convenient, needle-free delivery'], price:700 },
+  { id:20, type:'nasal', img:'Wolverine Stack Nasal.jpeg', category:'TB-500 + BPC-157 Composite', name:'Wolverine Nasal', dose:'10 ml · 2.5mg/2.5mg Nasal Spray', desc:'Needle-free regenerative protocol — daily micro-dosing of the Wolverine healing complex.', features:['Daily healing micro-doses','Joint, gut & tendon support','Convenient, needle-free delivery'], price:700 },
+  { id:21, type:'nasal', img:'Semax Nasal.jpeg', category:'Nootropic / Neuroprotective Peptide', name:'Semax', dose:'10 ml · 10 mg Nasal Spray', desc:'Russian-developed nootropic supporting BDNF expression, focus, and neuroprotection.', features:['Sharper focus & memory','Elevated BDNF & neuroplasticity','Resilience under stress'], price:800 },
+  { id:22, type:'nasal', img:'Selank Nasal.jpeg', category:'Anxiolytic Neuropeptide', name:'Selank', dose:'10 ml · 10 mg Nasal Spray', desc:'A calm, focused anxiolytic without sedation or dependence.', features:['Reduces anxiety & stress','Calm, sustained focus','Mood and immune support'], price:800 },
+  { id:23, type:'nasal', img:'Melanotan II Nasal.jpeg', category:'Melanocortin Agonist', name:'Melanotan II', dose:'10 ml · 20 mg Nasal Spray', desc:'Stimulates natural melanogenesis for a deeper, longer-lasting tan with reduced UV exposure.', features:['Enhanced natural tanning','Reduced UV requirement','Libido & vitality support'], price:800 },
+];
+
+function fmt(p) { return `<sup>R</sup>${p.toLocaleString('en-ZA')}<sub>ZAR</sub>`; }
+
+const badgeClass = { pen:'bp', vial:'bv', nasal:'bn' };
+
+function renderGrid(containerId, type) {
+  const grid = document.getElementById(containerId);
+  if (!grid) return;
+  const list = products.filter(p => p.type === type);
+  grid.innerHTML = list.map(p => `
+    <div class="pcard">
+      <div class="pcard-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.opacity='0'">
+        <div class="pcard-badges">
+          <span class="badge ${badgeClass[p.type]}">${p.type.toUpperCase()}</span>
+          <span class="badge brx">RX</span>
+        </div>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-cat">${p.category}</div>
+        <div class="pcard-name">${p.name}</div>
+        <div class="pcard-dose">${p.dose}</div>
+        <p class="pcard-desc">${p.desc}</p>
+        <ul class="pcard-feats">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul>
+        <div class="pcard-foot">
+          <div class="pcard-price">${fmt(p.price)}</div>
+          <a href="ngp-peptides.html" class="pcard-btn">+ ADD</a>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderHScroll(containerId, type) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const list = products.filter(p => p.type === type);
+  el.innerHTML = list.map(p => `
+    <div class="hcard">
+      <div class="hcard-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.opacity='0'">
+      </div>
+      <div class="hcard-body">
+        <div class="hcard-cat">${p.category}</div>
+        <div class="hcard-name">${p.name}</div>
+        <div class="hcard-dose">${p.dose}</div>
+        <div class="hcard-price">${fmt(p.price)}</div>
+      </div>
+    </div>`).join('');
+}
+
+renderGrid('penGrid', 'pen');
+renderGrid('vialGrid', 'vial');
+renderGrid('nasalGrid', 'nasal');
+renderHScroll('vialScroll', 'vial');
+
+// ── PEN EXPLODE ANIMATION ──
+(function initPenAnimation() {
+  const svg     = document.getElementById('penSvg');
+  const wrapper = document.getElementById('penWrapper');
+  const bgGlow  = document.querySelector('.pen-bg-glow');
+  if (!svg || !wrapper) return;
+
+  let cycleId;
+
+  function runCycle() {
+    // ① Assembled — pen floats gently
+    svg.classList.remove('pen-exploded');
+    wrapper.classList.remove('paused');
+    if (bgGlow) bgGlow.style.opacity = '1';
+
+    // ② Pause float → explode after 2.8s
+    const t1 = setTimeout(() => {
+      wrapper.classList.add('paused');
+      svg.classList.add('pen-exploded');
+      if (bgGlow) bgGlow.style.opacity = '0.35';
+    }, 2800);
+
+    // ③ Reassemble after 8.5s total (5.7s in exploded state)
+    const t2 = setTimeout(() => {
+      svg.classList.remove('pen-exploded');
+      if (bgGlow) bgGlow.style.opacity = '1';
+      // Resume float 1.6s after reassemble starts
+      setTimeout(() => {
+        wrapper.classList.remove('paused');
+      }, 1600);
+    }, 8500);
+
+    // ④ Next cycle after 11s
+    cycleId = setTimeout(runCycle, 11000);
+  }
+
+  // Kick off after entrance animation settles
+  const startId = setTimeout(runCycle, 1400);
+
+  // Cleanup on page hide (optional graceful stop)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      clearTimeout(cycleId);
+    } else {
+      clearTimeout(startId);
+      setTimeout(runCycle, 800);
+    }
+  });
+})();
+
+// ── Re-observe newly rendered elements ──
+function reObserve() {
+  document.querySelectorAll('[data-stagger]').forEach(el => {
+    if (!el.dataset.observed) {
+      io.observe(el);
+      el.dataset.observed = '1';
+    }
+  });
+}
+reObserve();
+
+// ── MARQUEE ──
+const compounds = [
+  'Xenotropin','Retatrutide','Tirzepatide','Semaglutide','Tesamorelin',
+  'BPC-157','TB-500','CJC-1295','Ipamorelin','MOTS-C','NAD+','GHK-Cu',
+  'Kisspeptin-10','Semax','Selank','Melanotan II','Delta Recover','Wolverine',
+  'Retirzepatide','DSIP','Tesamorelin','GLP-1','IGF-1','BPC-157'
+];
+function buildMarquee(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = [...compounds, ...compounds]
+    .map(c => `<span class="marquee-item"><span class="mdot"></span>${c}</span>`)
+    .join('');
+}
+buildMarquee('marqueeTrack1');
+buildMarquee('marqueeTrack2');
+buildMarquee('marqueeTrack3');
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   AWWWARDS / DRIBBBLE GLOBAL STYLES
+───────────────────────────────────────────── */
+@layer base {
+  :root {
+    --ink:    #0a0a0a;
+    --paper:  #f2f0ea;
+    --cy:     #00e5ff;
+    --lime:   #b8ff57;
+    --gold:   #c8a96e;
+    --fog:    #888;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  * { cursor: none !important; }          /* Custom cursor replaces everything */
+
+  html {
+    scroll-behavior: auto;                /* Lenis handles smoothness */
+    font-size: 16px;
+  }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Remove default selection highlight */
+  ::selection { background: var(--cy); color: var(--ink); }
+}
+
+/* ─────────────────────────────────────────────
+   CUSTOM CURSOR
+───────────────────────────────────────────── */
+#cursor-ring {
+  position: fixed;
+  top: -20px; left: -20px;
+  width: 40px; height: 40px;
+  border: 1.5px solid rgba(242,240,234,0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  mix-blend-mode: difference;
+}
+#cursor-dot {
+  position: fixed;
+  top: -3px; left: -3px;
+  width: 6px; height: 6px;
+  background: var(--paper);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  mix-blend-mode: difference;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL PROGRESS BAR
+───────────────────────────────────────────── */
+#scroll-bar {
+  position: fixed; top: 0; left: 0;
+  height: 1.5px; width: 0%;
+  background: var(--cy);
+  z-index: 9000; pointer-events: none;
+  transition: width 0.06s linear;
+}
+
+/* ─────────────────────────────────────────────
+   OUTLINE / STROKE TEXT  (Awwwards staple)
+───────────────────────────────────────────── */
+.text-outline {
+  -webkit-text-stroke: 1.5px rgba(242,240,234,0.35);
+  color: transparent;
+}
+.text-outline-cy {
+  -webkit-text-stroke: 1.5px var(--cy);
+  color: transparent;
+}
+
+/* ─────────────────────────────────────────────
+   CLIP-PATH REVEAL  (wipe from left)
+───────────────────────────────────────────── */
+.clip-wipe {
+  clip-path: inset(0 100% 0 0);
+}
+.clip-wipe.revealed {
+  clip-path: inset(0 0% 0 0);
+}
+
+/* ─────────────────────────────────────────────
+   OVERFLOW HIDDEN LINE REVEAL
+───────────────────────────────────────────── */
+.overflow-clip { overflow: hidden; }
+.overflow-clip > span { display: block; }
+
+/* ─────────────────────────────────────────────
+   GRAIN OVERLAY
+───────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9998;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+  animation: grain 0.4s steps(2) infinite;
+}
+@keyframes grain {
+  0%,100% { transform: translate(0,0);     }
+  25%      { transform: translate(-1%,-1%); }
+  50%      { transform: translate(1%,1%);   }
+  75%      { transform: translate(-1%,1%);  }
+}
+
+/* ─────────────────────────────────────────────
+   MARQUEE
+───────────────────────────────────────────── */
+.marquee-track  { display: flex; width: max-content; animation: marquee-scroll 32s linear infinite; }
+.marquee-track2 { animation-direction: reverse; animation-duration: 28s; }
+@keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ─────────────────────────────────────────────
+   SECTION DIVIDER TAG
+───────────────────────────────────────────── */
+.sec-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--fog);
+  display: flex; align-items: center; gap: 14px;
+}
+.sec-tag::before { content: ''; width: 24px; height: 1px; background: var(--fog); }
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE NAV HIDE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hide-mobile { display: none; }
+  .hero-display { font-size: clamp(52px, 16vw, 100px) !important; }
+}

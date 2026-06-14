@@ -1,0 +1,11 @@
+{
+  "name": "nge-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Next Gen Evolution storefront + order/invoice serverless function",
+  "dependencies": {
+    "nodemailer": "^6.9.14",
+    "pdf-lib": "^1.17.1"
+  }
+}

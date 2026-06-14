@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Peptide Story — NGE · Next Gen Evolution</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────────── */
+:root{
+  --bg:   #020812;
+  --deep: #050e1f;
+  --card: #071428;
+  --b1:   rgba(45,184,216,0.10);
+  --b2:   rgba(45,184,216,0.20);
+  --w:    #eef2ff;
+  --mu:   #48688a;
+  --cy:   #2db8d8;
+  --cyb:  #5de8ff;
+  --gold: #c8a96e;
+  --nav-h:64px;
+}
+
+/* ─────────────────────────────────────────────
+   RESET / BASE
+───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--w);
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;line-height:1.6;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL PROGRESS
+───────────────────────────────────────────── */
+#bar{
+  position:fixed;top:0;left:0;height:2px;width:0%;z-index:9000;
+  background:linear-gradient(90deg,var(--cy),var(--cyb));
+  pointer-events:none;
+}
+
+/* ─────────────────────────────────────────────
+   NAV
+───────────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 60px;
+  background:rgba(2,8,18,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b1);
+  transition:background 0.3s;
+}
+.nav-logo{
+  font-family:'Space Mono',monospace;
+  font-size:15px;font-weight:700;letter-spacing:0.1em;
+  color:var(--w);
+}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{
+  font-size:11px;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--mu);text-decoration:none;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--cy)}
+.nav-cta{
+  font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--cy);border:1px solid var(--cy);padding:8px 22px;
+  text-decoration:none;transition:all 0.2s;
+}
+.nav-cta:hover{background:var(--cy);color:var(--bg)}
+
+/* ─────────────────────────────────────────────
+   SHARED UTILITIES
+───────────────────────────────────────────── */
+.tag{
+  font-family:'Space Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--cy);display:flex;align-items:center;gap:12px;margin-bottom:20px;
+}
+.tag::before{content:'';width:28px;height:1px;background:var(--cy)}
+.center-tag{justify-content:center}
+.center-tag::before,.center-tag::after{content:'';width:28px;height:1px;background:rgba(45,184,216,0.4)}
+h-serif{font-family:'Cormorant Garamond',serif}
+
+/* ─────────────────────────────────────────────
+   SECTION 1 — HERO (Sticky)
+───────────────────────────────────────────── */
+.hero{
+  position:sticky;top:0;        /* ← STICKY HERO */
+  height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:0 80px;
+  overflow:hidden;
+  z-index:1;
+}
+/* keep hero below its spacer during scroll */
+.hero-spacer{height:100vh}
+.hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(45,184,216,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(45,184,216,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.hero-radial{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 70% at 72% 42%,rgba(20,80,180,0.22) 0%,transparent 65%),
+    radial-gradient(ellipse 38% 48% at 18% 68%,rgba(10,40,110,0.28) 0%,transparent 60%);
+}
+#particleCanvas{
+  position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
+}
+.hero-content{position:relative;z-index:1;max-width:960px}
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--cy);margin-bottom:30px;
+  display:inline-flex;align-items:center;gap:10px;
+  opacity:0;transform:translateY(16px);
+}
+.hero-eyebrow .pulse{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--cy);box-shadow:0 0 10px var(--cy);
+  animation:heartbeat 2s ease-in-out infinite;
+}
+@keyframes heartbeat{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+
+.hero-h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(58px,8.5vw,128px);
+  font-weight:300;line-height:0.92;letter-spacing:-0.03em;
+  margin-bottom:34px;
+}
+.hero-h1 .reveal-line{display:block;overflow:hidden}
+.hero-h1 .reveal-line span{display:block;transform:translateY(105%)}
+.hero-h1 em{font-style:italic;color:var(--cyb)}
+
+.hero-sub{
+  font-size:16px;font-weight:300;color:var(--mu);
+  max-width:520px;line-height:1.85;
+  opacity:0;transform:translateY(20px);
+}
+
+/* Bottom row: scroll hint + stats */
+.hero-bottom{
+  position:absolute;bottom:40px;left:80px;right:80px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  z-index:1;
+  opacity:0;
+}
+.scroll-hint{
+  display:flex;align-items:center;gap:14px;
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--mu);
+}
+.scroll-lines{display:flex;flex-direction:column;gap:4px}
+.scroll-lines span{
+  display:block;width:14px;height:1px;background:var(--mu);
+  animation:tickle 2s ease-in-out infinite;
+}
+.scroll-lines span:nth-child(2){animation-delay:.14s;width:10px}
+.scroll-lines span:nth-child(3){animation-delay:.28s;width:6px}
+@keyframes tickle{0%,100%{opacity:.3;transform:scaleX(.5)}50%{opacity:1;transform:scaleX(1)}}
+.hero-stats{display:flex;gap:40px}
+.stat-num{
+  display:block;font-family:'Cormorant Garamond',serif;
+  font-size:34px;font-weight:500;line-height:1;
+}
+.stat-num em{font-style:normal;color:var(--cy)}
+.stat-lbl{
+  display:block;font-family:'Space Mono',monospace;
+  font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--mu);margin-top:5px;
+}
+
+/* ─────────────────────────────────────────────
+   MARQUEE
+───────────────────────────────────────────── */
+.marquee-wrap{
+  position:relative;z-index:2;
+  overflow:hidden;
+  background:var(--bg);padding:13px 0;
+  border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);
+}
+.marquee-track{
+  display:flex;width:max-content;
+  animation:ticker 42s linear infinite;
+}
+.m-item{
+  display:flex;align-items:center;gap:14px;padding:0 26px;
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--mu);white-space:nowrap;
+}
+.m-dot{width:4px;height:4px;border-radius:50%;background:var(--cy);flex-shrink:0}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ─────────────────────────────────────────────
+   SECTION 2 — INTRO / WHAT IS A PEPTIDE
+───────────────────────────────────────────── */
+.s-intro{
+  position:relative;z-index:2;
+  padding:130px 80px;
+  background:var(--deep);
+  border-bottom:1px solid var(--b1);
+}
+.intro-inner{max-width:1100px;margin:0 auto}
+.intro-big{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,4.8vw,60px);
+  font-weight:300;line-height:1.18;letter-spacing:-0.01em;
+}
+.intro-big em{font-style:italic;color:var(--cyb)}
+.intro-big .rl{display:block;overflow:hidden}
+.intro-big .rl span{display:block;transform:translateY(105%)}
+.intro-counters{
+  display:flex;gap:64px;margin-top:64px;
+  padding-top:48px;border-top:1px solid var(--b1);
+  flex-wrap:wrap;
+}
+.cnt-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:58px;font-weight:400;line-height:1;color:var(--w);
+}
+.cnt-n em{font-style:normal;color:var(--cy)}
+.cnt-l{
+  font-family:'Space Mono',monospace;
+  font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--mu);margin-top:8px;
+}
+
+/* ─────────────────────────────────────────────
+   SECTION 3 — PINNED MOLECULE STORY
+   Graphic stays fixed; text panels scroll past.
+───────────────────────────────────────────── */
+.s-story{
+  position:relative;z-index:2;
+  background:var(--bg);
+}
+.story-inner{
+  display:grid;grid-template-columns:1fr 1fr;
+  max-width:1320px;margin:0 auto;
+  padding:0 60px;
+}
+
+/* Left: sticky molecule column */
+.mol-col{
+  position:sticky;top:0;
+  height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 60px 80px 0;
+}
+.mol-stage{
+  position:relative;width:100%;max-width:420px;aspect-ratio:1;
+}
+#molSvg{width:100%;height:100%;overflow:visible}
+.mol-lbl{
+  margin-top:20px;text-align:center;
+  font-family:'Space Mono',monospace;
+  font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--mu);transition:color 0.5s;
+}
+
+/* Right: scrolling text panels */
+.panels-col{
+  padding:100vh 0 100vh 60px;
+  display:flex;flex-direction:column;
+}
+.s-panel{
+  min-height:80vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 0;
+}
+.s-panel h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,4vw,60px);
+  font-weight:300;line-height:1.08;letter-spacing:-0.02em;
+  margin-bottom:22px;
+}
+.s-panel h2 em{font-style:italic;color:var(--cyb)}
+.s-panel p{
+  font-size:15px;color:var(--mu);line-height:1.85;font-weight:300;max-width:440px;
+}
+.bullets{list-style:none;display:flex;flex-direction:column;gap:11px;margin-top:26px}
+.bullets li{
+  font-size:13px;color:var(--mu);
+  display:flex;align-items:center;gap:12px;
+}
+.bullets li::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--cy);flex-shrink:0;
+}
+
+/* ─────────────────────────────────────────────
+   SECTION 4 — HOW IT WORKS (5 steps)
+───────────────────────────────────────────── */
+.s-mech{
+  position:relative;z-index:2;
+  padding:140px 80px;
+  background:var(--deep);
+  border-top:1px solid var(--b1);
+}
+.mech-inner{max-width:1200px;margin:0 auto}
+.mech-header{
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;
+  margin-bottom:90px;
+}
+.mech-header h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,68px);font-weight:300;line-height:1.0;
+}
+.mech-header h2 em{font-style:italic;color:var(--cyb)}
+.mech-header p{font-size:15px;color:var(--mu);line-height:1.8;font-weight:300}
+
+/* Progress line that draws between steps */
+.steps-wrap{position:relative}
+.steps-line{
+  position:absolute;top:48px;left:0;right:0;height:1px;
+  background:var(--b1);z-index:0;overflow:hidden;
+}
+.steps-line-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--cy),var(--cyb));
+  transition:width 0.8s ease;
+}
+.steps{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:0;
+  background:var(--b1);position:relative;z-index:1;
+}
+.step{
+  background:var(--bg);padding:48px 26px 40px;
+  position:relative;overflow:hidden;
+  clip-path:inset(0 0 0 0);
+}
+.step-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:66px;font-weight:300;
+  color:rgba(45,184,216,0.05);
+  position:absolute;top:8px;right:14px;
+  line-height:1;pointer-events:none;
+  transition:color 0.4s;
+}
+.step-icon{
+  width:44px;height:44px;border:1px solid var(--b2);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:20px;margin-top:10px;
+  position:relative;z-index:1;
+  background:var(--deep);
+  transition:border-color 0.4s,box-shadow 0.4s;
+}
+.step:hover .step-icon{
+  border-color:var(--cy);
+  box-shadow:0 0 14px rgba(45,184,216,0.3);
+}
+.step h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:500;margin-bottom:10px;
+}
+.step p{font-size:12.5px;color:var(--mu);line-height:1.65;font-weight:300}
+
+/* ─────────────────────────────────────────────
+   SECTION 5 — DELIVERY FORMS
+───────────────────────────────────────────── */
+.s-formats{
+  position:relative;z-index:2;
+  padding:140px 80px;
+  background:var(--bg);
+  border-top:1px solid var(--b1);
+}
+.fmt-inner{max-width:1200px;margin:0 auto}
+.fmt-header{text-align:center;margin-bottom:80px}
+.fmt-header h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,68px);font-weight:300;
+}
+.fmt-header h2 em{font-style:italic;color:var(--cyb)}
+.fmt-header p{font-size:15px;color:var(--mu);font-weight:300;max-width:540px;margin:14px auto 0}
+.fmt-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--b1);
+}
+.fc{
+  background:var(--card);padding:52px 36px;
+  position:relative;overflow:hidden;
+  border-top:2px solid transparent;
+  transition:background 0.3s;
+}
+.fc:hover{background:#0a1930}
+.fc.pen{border-top-color:var(--cy)}
+.fc.vial{border-top-color:var(--gold)}
+.fc.nasal{border-top-color:#7fa8dc}
+.fc-icon{font-size:30px;margin-bottom:24px}
+.fc-tag{
+  font-family:'Space Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--mu);margin-bottom:12px;
+}
+.fc h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:400;margin-bottom:14px;
+}
+.fc p{font-size:13px;color:var(--mu);line-height:1.75;font-weight:300;margin-bottom:24px}
+.fc-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.fc-list li{
+  font-size:12px;color:var(--mu);display:flex;align-items:center;gap:10px;
+}
+.fc-list li::before{content:'';width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.fc.pen   .fc-list li::before{background:var(--cy)}
+.fc.vial  .fc-list li::before{background:var(--gold)}
+.fc.nasal .fc-list li::before{background:#7fa8dc}
+.fc-count{
+  margin-top:28px;padding-top:18px;border-top:1px solid var(--b1);
+  font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;
+}
+.fc.pen   .fc-count{color:var(--cy)}
+.fc.vial  .fc-count{color:var(--gold)}
+.fc.nasal .fc-count{color:#7fa8dc}
+.fc-count-lbl{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:0.16em;text-transform:uppercase;color:var(--mu);
+}
+
+/* ─────────────────────────────────────────────
+   SECTION 6 — FIVE PILLARS (alternating rows)
+───────────────────────────────────────────── */
+.s-pillars{
+  position:relative;z-index:2;
+  background:var(--deep);border-top:1px solid var(--b1);
+}
+.pillars-hd{
+  padding:120px 80px 80px;text-align:center;
+}
+.pillars-hd h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,68px);font-weight:300;
+}
+.pillars-hd h2 em{font-style:italic;color:var(--cyb)}
+
+.pr{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--b1);min-height:55vh;
+}
+.pr.rev{direction:rtl}
+.pr.rev>*{direction:ltr}
+
+.pr-graphic{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);padding:60px;position:relative;overflow:hidden;
+}
+.pr-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(120px,16vw,210px);
+  font-weight:300;line-height:1;
+  color:rgba(45,184,216,0.035);
+  position:absolute;
+  user-select:none;pointer-events:none;
+}
+.pr-icon{
+  position:relative;z-index:1;
+  width:110px;height:110px;
+  border:1px solid var(--b2);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;color:var(--cy);
+  transition:box-shadow 0.4s,border-color 0.4s;
+}
+.pr:hover .pr-icon{
+  box-shadow:0 0 40px rgba(45,184,216,0.2);
+  border-color:rgba(45,184,216,0.5);
+}
+
+.pr-body{
+  padding:60px 80px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.pr-body .tag{margin-bottom:16px}
+.pr-body h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,3.5vw,46px);
+  font-weight:400;line-height:1.1;margin-bottom:18px;
+}
+.pr-body p{font-size:15px;color:var(--mu);line-height:1.8;font-weight:300;max-width:440px}
+
+/* ─────────────────────────────────────────────
+   PULL QUOTE
+───────────────────────────────────────────── */
+.s-quote{
+  position:relative;z-index:2;
+  padding:150px 80px;text-align:center;
+  background:var(--bg);border-top:1px solid var(--b1);
+  overflow:hidden;
+}
+.quote-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 70% at 50% 50%,rgba(45,184,216,0.05) 0%,transparent 65%);
+}
+.qmark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:110px;line-height:0.5;color:rgba(45,184,216,0.1);
+  display:block;margin-bottom:18px;
+}
+.qtext{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,4.5vw,60px);
+  font-weight:300;line-height:1.22;
+  max-width:1000px;margin:0 auto 28px;
+}
+.qtext em{font-style:italic;color:var(--cyb)}
+.qsource{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--mu);
+}
+
+/* ─────────────────────────────────────────────
+   SECTION 7 — FINAL CTA
+───────────────────────────────────────────── */
+.s-cta{
+  position:relative;z-index:2;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:80px;
+  background:var(--deep);border-top:1px solid var(--b1);
+  overflow:hidden;
+}
+.cta-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 62% 80% at 50% 50%,rgba(45,184,216,0.06) 0%,transparent 65%),
+    linear-gradient(rgba(45,184,216,0.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(45,184,216,0.022) 1px,transparent 1px);
+  background-size:100% 100%,60px 60px,60px 60px;
+}
+.cta-inner{position:relative;z-index:1;max-width:900px}
+.cta-tag{
+  font-family:'Space Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--cy);margin-bottom:30px;
+  display:flex;align-items:center;justify-content:center;gap:18px;
+}
+.cta-tag::before,.cta-tag::after{
+  content:'';width:40px;height:1px;background:rgba(45,184,216,0.4);
+}
+.cta-h{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(52px,8.5vw,112px);
+  font-weight:300;line-height:0.92;letter-spacing:-0.03em;
+  margin-bottom:26px;
+}
+.cta-h em{font-style:italic;color:var(--cyb)}
+.cta-sub{
+  font-size:16px;color:var(--mu);font-weight:300;
+  line-height:1.85;margin-bottom:52px;
+  max-width:560px;margin-left:auto;margin-right:auto;
+}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-p{
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;
+  background:var(--cy);color:var(--bg);
+  padding:18px 48px;display:inline-block;text-decoration:none;
+  transition:opacity .2s,transform .2s;
+}
+.btn-p:hover{opacity:.85;transform:translateY(-2px)}
+.btn-o{
+  font-family:'Space Mono',monospace;font-size:12px;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--w);border:1px solid rgba(255,255,255,0.22);
+  padding:18px 48px;display:inline-block;text-decoration:none;
+  transition:border-color .2s;
+}
+.btn-o:hover{border-color:rgba(255,255,255,0.5)}
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+footer{
+  position:relative;z-index:2;
+  background:var(--bg);border-top:1px solid var(--b1);
+  padding:40px 80px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:14px;
+}
+.ft-brand{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:0.1em}
+.ft-tag{font-size:11px;color:var(--mu);margin-top:4px;letter-spacing:0.04em}
+.ft-legal{font-size:10px;color:rgba(72,104,138,0.55);line-height:1.7;text-align:right;max-width:450px}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media(max-width:1100px){
+  .story-inner{grid-template-columns:1fr;padding:0 40px}
+  .mol-col{
+    position:relative;top:auto;height:auto;
+    padding:80px 0 20px;
+  }
+  .panels-col{padding:20px 0 60px}
+  .mech-header{grid-template-columns:1fr;gap:24px}
+  .steps{grid-template-columns:repeat(3,1fr)}
+  .fmt-cards{grid-template-columns:1fr}
+  .pr{grid-template-columns:1fr}
+  .pr.rev{direction:ltr}
+  .pr-body{padding:40px 48px}
+}
+@media(max-width:768px){
+  .nav{padding:0 20px}
+  .nav-links{display:none}
+  .hero,.s-intro,.s-mech,.s-formats,.s-pillars .pillars-hd,.s-quote,.s-cta,footer{
+    padding-left:24px;padding-right:24px;
+  }
+  .hero{padding-top:var(--nav-h)}
+  .hero-bottom{left:24px;right:24px;flex-direction:column;align-items:flex-start;gap:20px}
+  .steps{grid-template-columns:1fr}
+  .intro-counters{gap:28px}
+  .pr-body{padding:32px 24px}
+  .pr-graphic{padding:40px 24px}
+  .story-inner{padding:0 24px}
+  .mol-col{padding:60px 0 20px}
+  .panels-col{padding:0 0 40px}
+  .s-panel{min-height:auto;padding:40px 0}
+}
+@media(max-width:480px){
+  .hero-stats{flex-direction:column;gap:16px}
+  .intro-counters{flex-direction:column;gap:20px}
+}
+</style>
+</head>
+<body>
+
+<div id="bar"></div>
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">NGE</div>
+  <ul class="nav-links">
+    <li><a href="#story">The Science</a></li>
+    <li><a href="#mechanism">Mechanism</a></li>
+    <li><a href="#delivery">Catalogue</a></li>
+    <li><a href="#pillars">Pillars</a></li>
+  </ul>
+  <a href="ngp-peptides.html" class="nav-cta">Shop Now</a>
+</nav>
+
+<!-- ── HERO (sticky) ── -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-radial"></div>
+    <canvas id="particleCanvas"></canvas>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="eyebrow">
+      <span class="pulse"></span>NGE · Next Gen Evolution · The Science of You
+    </div>
+    <h1 class="hero-h1">
+      <span class="reveal-line"><span>The Molecules</span></span>
+      <span class="reveal-line"><span>That Change</span></span>
+      <span class="reveal-line"><span><em>Everything.</em></span></span>
+    </h1>
+    <p class="hero-sub" id="heroSub">
+      A new chapter in human performance. Discover the science of peptides —
+      precision molecules engineered to work with your biology, not against it.
+    </p>
+  </div>
+
+  <div class="hero-bottom" id="heroBottom">
+    <div class="scroll-hint">
+      <div class="scroll-lines">
+        <span></span><span></span><span></span>
+      </div>
+      Scroll to explore
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num"><em>24</em>+</span>
+        <span class="stat-lbl">Compounds</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num"><em>99</em>%+</span>
+        <span class="stat-lbl">Purity Grade</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num"><em>3</em></span>
+        <span class="stat-lbl">Delivery Forms</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- spacer that pushes content below the sticky hero -->
+<div class="hero-spacer"></div>
+
+<!-- ── MARQUEE ── -->
+<div class="marquee-wrap" style="position:relative;z-index:2">
+  <div class="marquee-track" id="mtrack"></div>
+</div>
+
+<!-- ── S2: INTRO ── -->
+<section class="s-intro" id="intro">
+  <div class="intro-inner">
+    <div class="tag">Chapter 01 — The Fundamentals</div>
+    <div class="intro-big" id="introBig">
+      <div class="rl"><span>Not hormones. Not stimulants.</span></div>
+      <div class="rl"><span>Peptides are your body's own</span></div>
+      <div class="rl"><span><em>molecular language.</em></span></div>
+    </div>
+    <div class="intro-counters">
+      <div>
+        <div class="cnt-n"><span class="cnum" data-to="24">0</span><em>+</em></div>
+        <div class="cnt-l">Active Compounds</div>
+      </div>
+      <div>
+        <div class="cnt-n"><span class="cnum" data-to="99">0</span><em>%+</em></div>
+        <div class="cnt-l">Pharmaceutical Purity</div>
+      </div>
+      <div>
+        <div class="cnt-n"><span class="cnum" data-to="3">0</span></div>
+        <div class="cnt-l">Delivery Formats</div>
+      </div>
+      <div>
+        <div class="cnt-n"><span class="cnum" data-to="4000">0</span><em>+</em></div>
+        <div class="cnt-l">Genes Reactivated by GHK-Cu</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── S3: STORY — PINNED MOLECULE ── -->
+<section class="s-story" id="story">
+  <div class="story-inner">
+
+    <!-- LEFT: sticky molecule (CSS sticky) -->
+    <div class="mol-col" id="molCol">
+      <div class="mol-stage">
+        <svg id="molSvg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow-soft">
+              <feGaussianBlur stdDeviation="10" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="glow-med">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <radialGradient id="coreGrad" cx="50%" cy="35%" r="55%">
+              <stop offset="0%" stop-color="#88eeff"/>
+              <stop offset="55%" stop-color="#2db8d8"/>
+              <stop offset="100%" stop-color="#0a5870"/>
+            </radialGradient>
+            <radialGradient id="innerGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(45,184,216,0.4)"/>
+              <stop offset="100%" stop-color="rgba(45,184,216,0.1)"/>
+            </radialGradient>
+          </defs>
+
+          <!-- Orbit rings -->
+          <circle cx="200" cy="200" r="155" fill="none" stroke="rgba(45,184,216,0.04)" stroke-width="1" stroke-dasharray="3 7"/>
+          <circle cx="200" cy="200" r="115" fill="none" stroke="rgba(45,184,216,0.06)" stroke-width="1" stroke-dasharray="4 6"/>
+          <circle cx="200" cy="200" r="75"  fill="none" stroke="rgba(45,184,216,0.08)" stroke-width="1" stroke-dasharray="5 5"/>
+
+          <!-- Bond lines: outer to inner -->
+          <g id="bonds" stroke="rgba(45,184,216,0.35)" stroke-width="1.2" fill="none">
+            <!-- inner → center -->
+            <line x1="200" y1="125" x2="200" y2="200"/>
+            <line x1="265" y1="162" x2="200" y2="200"/>
+            <line x1="265" y1="238" x2="200" y2="200"/>
+            <line x1="200" y1="275" x2="200" y2="200"/>
+            <line x1="135" y1="238" x2="200" y2="200"/>
+            <line x1="135" y1="162" x2="200" y2="200"/>
+            <!-- outer → inner -->
+            <line x1="200" y1="45"  x2="200" y2="125" stroke-width="0.8" stroke="rgba(45,184,216,0.25)"/>
+            <line x1="320" y1="112" x2="265" y2="162" stroke-width="0.8" stroke="rgba(45,184,216,0.25)"/>
+            <line x1="320" y1="288" x2="265" y2="238" stroke-width="0.8" stroke="rgba(45,184,216,0.25)"/>
+            <line x1="200" y1="355" x2="200" y2="275" stroke-width="0.8" stroke="rgba(45,184,216,0.25)"/>
+            <line x1="80"  y1="288" x2="135" y2="238" stroke-width="0.8" stroke="rgba(45,184,216,0.25)"/>
+            <line x1="80"  y1="112" x2="135" y2="162" stroke-width="0.8" stroke="rgba(45,184,216,0.25)"/>
+          </g>
+
+          <!-- Outer nodes (small, dark) -->
+          <g id="outer-nodes">
+            <circle cx="200" cy="45"  r="9" fill="#1a2a40" stroke="rgba(45,184,216,0.3)" stroke-width="1"/>
+            <circle cx="320" cy="112" r="9" fill="#1a2a40" stroke="rgba(45,184,216,0.3)" stroke-width="1"/>
+            <circle cx="320" cy="288" r="9" fill="#1a2a40" stroke="rgba(45,184,216,0.3)" stroke-width="1"/>
+            <circle cx="200" cy="355" r="9" fill="#1a2a40" stroke="rgba(45,184,216,0.3)" stroke-width="1"/>
+            <circle cx="80"  cy="288" r="9" fill="#1a2a40" stroke="rgba(45,184,216,0.3)" stroke-width="1"/>
+            <circle cx="80"  cy="112" r="9" fill="#1a2a40" stroke="rgba(45,184,216,0.3)" stroke-width="1"/>
+          </g>
+
+          <!-- Amino acid labels -->
+          <g font-family="Space Mono,monospace" font-size="7.5" fill="rgba(93,232,255,0.5)" font-weight="700">
+            <text x="200" y="40"  text-anchor="middle">GLY</text>
+            <text x="335" y="116" text-anchor="start">ALA</text>
+            <text x="335" y="294" text-anchor="start">SER</text>
+            <text x="200" y="375" text-anchor="middle">TYR</text>
+            <text x="65"  y="294" text-anchor="end">PRO</text>
+            <text x="65"  y="116" text-anchor="end">VAL</text>
+          </g>
+
+          <!-- Inner ring nodes (medium, glowing) -->
+          <g id="inner-nodes">
+            <circle cx="200" cy="125" r="16" fill="url(#innerGrad)" stroke="rgba(45,184,216,0.55)" stroke-width="1.5"/>
+            <circle cx="265" cy="162" r="16" fill="url(#innerGrad)" stroke="rgba(45,184,216,0.55)" stroke-width="1.5"/>
+            <circle cx="265" cy="238" r="16" fill="url(#innerGrad)" stroke="rgba(45,184,216,0.55)" stroke-width="1.5"/>
+            <circle cx="200" cy="275" r="16" fill="url(#innerGrad)" stroke="rgba(45,184,216,0.55)" stroke-width="1.5"/>
+            <circle cx="135" cy="238" r="16" fill="url(#innerGrad)" stroke="rgba(45,184,216,0.55)" stroke-width="1.5"/>
+            <circle cx="135" cy="162" r="16" fill="url(#innerGrad)" stroke="rgba(45,184,216,0.55)" stroke-width="1.5"/>
+          </g>
+
+          <!-- Center glow halo -->
+          <circle cx="200" cy="200" r="48" fill="rgba(45,184,216,0.06)" filter="url(#glow-soft)" id="halo"/>
+          <!-- Center node -->
+          <circle cx="200" cy="200" r="30" fill="url(#coreGrad)" filter="url(#glow-med)" id="core"/>
+          <circle cx="200" cy="200" r="30" fill="none" stroke="rgba(93,232,255,0.5)" stroke-width="1.5"/>
+          <!-- Specular highlight on center -->
+          <ellipse cx="191" cy="190" rx="9" ry="6" fill="rgba(255,255,255,0.3)" transform="rotate(-30,191,190)"/>
+
+          <!-- NH₂ label on core -->
+          <text x="200" y="205" text-anchor="middle"
+            fill="rgba(255,255,255,0.88)" font-size="9.5"
+            font-family="Space Mono,monospace" font-weight="700" letter-spacing="0.5">NH₂</text>
+
+          <!-- Electron dots (animated) -->
+          <g id="electrons">
+            <circle class="e" cx="200" cy="88" r="3.5" fill="#5de8ff" opacity="0.7"/>
+            <circle class="e" cx="307" cy="144" r="3"   fill="#5de8ff" opacity="0.65"/>
+            <circle class="e" cx="307" cy="256" r="3.5" fill="#5de8ff" opacity="0.7"/>
+            <circle class="e" cx="200" cy="312" r="3"   fill="#5de8ff" opacity="0.65"/>
+            <circle class="e" cx="93"  cy="256" r="3.5" fill="#5de8ff" opacity="0.7"/>
+            <circle class="e" cx="93"  cy="144" r="3"   fill="#5de8ff" opacity="0.65"/>
+          </g>
+        </svg>
+      </div>
+      <div class="mol-lbl" id="molLbl">Amino Acid Chain · C₂H₅NO₂</div>
+    </div>
+
+    <!-- RIGHT: scrolling text panels -->
+    <div class="panels-col">
+      <div class="s-panel" id="sp1">
+        <div class="tag">Chapter 02 — The Structure</div>
+        <h2>Amino acids,<br>linked with<br><em>precision.</em></h2>
+        <p>Peptides are short chains of amino acids — the same building blocks your body already uses. Unlike synthetic drugs, they speak in biology's native vocabulary: receptor-specific, targeted, and naturally metabolised.</p>
+        <ul class="bullets">
+          <li>2–50 amino acids per chain</li>
+          <li>99%+ pharmaceutical purity grade</li>
+          <li>Enzymatically degraded — no toxic accumulation</li>
+        </ul>
+      </div>
+
+      <div class="s-panel" id="sp2">
+        <div class="tag">Chapter 03 — The Signal</div>
+        <h2>Your body's<br>own language,<br><em>amplified.</em></h2>
+        <p>Peptides act as molecular signals — binding to specific receptors and triggering precise biological responses. Growth. Recovery. Fat oxidation. Neuroplasticity. Not through chemical blunt force, but through the same messaging system evolution perfected.</p>
+        <ul class="bullets">
+          <li>Receptor-specific binding mechanism</li>
+          <li>Does not suppress endogenous production</li>
+          <li>Half-life tuned to the therapeutic window</li>
+        </ul>
+      </div>
+
+      <div class="s-panel" id="sp3">
+        <div class="tag">Chapter 04 — The Difference</div>
+        <h2>Not synthetic.<br>Not systemic.<br><em>Targeted.</em></h2>
+        <p>Traditional compounds carpet-bomb. Peptides whisper. The structural precision of each chain determines exactly which pathway it activates — and nothing else. This is why elite clinicians and athletes choose peptides over broad-spectrum approaches.</p>
+        <ul class="bullets">
+          <li>Minimal off-target effect profile</li>
+          <li>Clinically studied and peer-reviewed</li>
+          <li>Compatible with natural hormonal rhythms</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── S4: HOW IT WORKS ── -->
+<section class="s-mech" id="mechanism">
+  <div class="mech-inner">
+    <div class="mech-header" id="mechHdr">
+      <div>
+        <div class="tag">Chapter 05 — The Mechanism</div>
+        <h2>Five steps.<br>One <em>transformation.</em></h2>
+      </div>
+      <p>From injection to cellular response — every step precisely mediated by the peptide's structure, half-life, and receptor affinity. Understanding the mechanism is understanding the protocol.</p>
+    </div>
+
+    <div class="steps-wrap">
+      <div class="steps-line"><div class="steps-line-fill" id="stepsLineFill"></div></div>
+      <div class="steps" id="stepsGrid">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-icon">💉</div>
+          <h3>Administer</h3>
+          <p>Subcutaneous injection delivers the peptide into the extracellular matrix, where the journey begins.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-icon">🔄</div>
+          <h3>Circulate</h3>
+          <p>Systemic circulation carries the peptide, guided by its amino acid sequence toward tissue-specific targets.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-icon">🔗</div>
+          <h3>Bind</h3>
+          <p>Like a key to a lock, the peptide docks onto its specific receptor with high affinity and selectivity.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-icon">⚡</div>
+          <h3>Signal</h3>
+          <p>Receptor activation cascades an intracellular signal — initiating repair, growth, or metabolic rebalancing.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">05</div>
+          <div class="step-icon">✦</div>
+          <h3>Transform</h3>
+          <p>Tissue heals. Metabolism shifts. Hormones rebalance. The biological response unfolds. Protocol delivered.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── S5: DELIVERY FORMS ── -->
+<section class="s-formats" id="delivery">
+  <div class="fmt-inner">
+    <div class="fmt-header" id="fmtHdr">
+      <div class="tag center-tag">Chapter 06 — The Formats</div>
+      <h2>Three formats.<br><em>One standard.</em></h2>
+      <p>Every compound engineered to the same uncompromising purity benchmark — regardless of which delivery format you choose.</p>
+    </div>
+    <div class="fmt-cards" id="fmtCards">
+      <div class="fc pen">
+        <div class="fc-icon">💉</div>
+        <div class="fc-tag">Format 01</div>
+        <h3>Pre-Filled<br>Pens</h3>
+        <p>Pharmaceutical-grade multidose pens pre-loaded with precision-dosed peptide solution. No mixing. No measuring. Click-dose accuracy every time.</p>
+        <ul class="fc-list">
+          <li>Ready-to-use subcutaneous delivery</li>
+          <li>Fixed dose-per-click accuracy</li>
+          <li>Cold-chain maintained from manufacture</li>
+          <li>Travel-ready, discreet format</li>
+        </ul>
+        <div class="fc-count">10<br><span class="fc-count-lbl">Compounds</span></div>
+      </div>
+      <div class="fc vial">
+        <div class="fc-icon">🧪</div>
+        <div class="fc-tag">Format 02</div>
+        <h3>Self-Mix<br>Vials</h3>
+        <p>Lyophilised peptide powder supplied with bacteriostatic water. Reconstitute to your protocol. Clinical flexibility for custom dosing and splitting.</p>
+        <ul class="fc-list">
+          <li>Lyophilised for maximum shelf stability</li>
+          <li>Paired with bacteriostatic water</li>
+          <li>Full clinical dose flexibility</li>
+          <li>Preferred by practitioners and researchers</li>
+        </ul>
+        <div class="fc-count">9<br><span class="fc-count-lbl">Compounds</span></div>
+      </div>
+      <div class="fc nasal">
+        <div class="fc-icon">💧</div>
+        <div class="fc-tag">Format 03</div>
+        <h3>Nasal<br>Sprays</h3>
+        <p>Needle-free trans-nasal delivery for daily micro-dose protocols. Rapid mucosal absorption — no injection required. Ideal for nootropics and ongoing maintenance.</p>
+        <ul class="fc-list">
+          <li>Zero-injection delivery system</li>
+          <li>Precise spray-per-dose metering</li>
+          <li>Ideal for nootropics and daily use</li>
+          <li>10 ml bottles, 90-day use window</li>
+        </ul>
+        <div class="fc-count">5<br><span class="fc-count-lbl">Compounds</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── S6: FIVE PILLARS ── -->
+<section class="s-pillars" id="pillars">
+  <div class="pillars-hd">
+    <div class="tag center-tag">Chapter 07 — The Non-Negotiables</div>
+    <h2>Built on five<br><em>non-negotiables.</em></h2>
+  </div>
+
+  <div class="pr" id="pr1">
+    <div class="pr-graphic">
+      <div class="pr-num">01</div>
+      <div class="pr-icon">◎</div>
+    </div>
+    <div class="pr-body">
+      <div class="tag">Non-Negotiable 01</div>
+      <h3>Targeted Results</h3>
+      <p>Peptides bind receptor-specifically — triggering only the pathway they were designed for. No scatter. No noise. Only the biological response you intended, at the cellular level where it counts.</p>
+    </div>
+  </div>
+
+  <div class="pr rev" id="pr2">
+    <div class="pr-graphic">
+      <div class="pr-num">02</div>
+      <div class="pr-icon">↻</div>
+    </div>
+    <div class="pr-body">
+      <div class="tag">Non-Negotiable 02</div>
+      <h3>Faster Recovery</h3>
+      <p>BPC-157 accelerates angiogenesis and tendon-to-bone healing. TB-500 drives actin polymerisation for tissue repair across the body. Together they represent the most effective recovery stack available outside a hospital.</p>
+    </div>
+  </div>
+
+  <div class="pr" id="pr3">
+    <div class="pr-graphic">
+      <div class="pr-num">03</div>
+      <div class="pr-icon">⬡</div>
+    </div>
+    <div class="pr-body">
+      <div class="tag">Non-Negotiable 03</div>
+      <h3>Clinically Studied</h3>
+      <p>GLP-1 agonists like Semaglutide and Tirzepatide have extensive Phase III trial data. NAD+ restoration is the subject of landmark longevity research at MIT and Harvard. Every compound in the NGE catalogue has peer-reviewed evidence.</p>
+    </div>
+  </div>
+
+  <div class="pr rev" id="pr4">
+    <div class="pr-graphic">
+      <div class="pr-num">04</div>
+      <div class="pr-icon">▲</div>
+    </div>
+    <div class="pr-body">
+      <div class="tag">Non-Negotiable 04</div>
+      <h3>Peak Performance</h3>
+      <p>MOTS-C activates the skeletal muscle AMPK pathway — the same mechanism triggered by exercise — dramatically improving glucose uptake and endurance. Xenotropin drives protein synthesis, lean mass, and neural recovery simultaneously.</p>
+    </div>
+  </div>
+
+  <div class="pr" id="pr5">
+    <div class="pr-graphic">
+      <div class="pr-num">05</div>
+      <div class="pr-icon">∞</div>
+    </div>
+    <div class="pr-body">
+      <div class="tag">Non-Negotiable 05</div>
+      <h3>Longevity &amp; Wellness</h3>
+      <p>NAD+ restoration reverses mitochondrial senescence markers in preclinical models. GHK-Cu reactivates over 4,000 genes involved in tissue repair. Tesamorelin actively reduces visceral adipose tissue — one of the strongest predictors of metabolic disease.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PULL QUOTE ── -->
+<section class="s-quote" id="quote">
+  <div class="quote-glow"></div>
+  <span class="qmark">"</span>
+  <div class="qtext" id="qtext">
+    The future of performance is not willpower —<br>it is <em>molecular signalling.</em>
+  </div>
+  <div class="qsource" id="qsrc">NGE · Science · Strength · Transformation</div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="s-cta" id="cta">
+  <div class="cta-bg"></div>
+  <div class="cta-inner">
+    <div class="cta-tag" id="ctaTag">Begin Your Protocol</div>
+    <h2 class="cta-h" id="ctaH">Performance is<br>a <em>protocol.</em></h2>
+    <p class="cta-sub" id="ctaSub">
+      24+ pharmaceutical-grade compounds. Three delivery formats. Nationwide delivery across South Africa. R100 flat rate — free on orders over R3,000.
+    </p>
+    <div class="cta-btns" id="ctaBtns">
+      <a href="ngp-peptides.html" class="btn-p">Shop the Catalogue</a>
+      <a href="ngp-scrollytelling.html" class="btn-o">The Experience</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div>
+    <div class="ft-brand">NGE — Next Gen Evolution</div>
+    <div class="ft-tag">Science · Strength · Transformation</div>
+  </div>
+  <div class="ft-legal">
+    For research and clinical use only. Not for human consumption without medical supervision.<br>
+    © 2026 NGE — Next Gen Peptides. All rights reserved.
+  </div>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ─────────────────────────────
+   SCROLL PROGRESS BAR
+───────────────────────────── */
+ScrollTrigger.create({
+  onUpdate: s => document.getElementById('bar').style.width = (s.progress * 100) + '%'
+});
+
+/* ─────────────────────────────
+   PARTICLE CANVAS
+───────────────────────────── */
+(function() {
+  const cv = document.getElementById('particleCanvas');
+  const cx = cv.getContext('2d');
+  let W, H;
+  const resize = () => { W = cv.width = cv.offsetWidth; H = cv.height = cv.offsetHeight; };
+  resize();
+  new ResizeObserver(resize).observe(cv);
+
+  const pts = Array.from({length:90}, () => ({
+    x: Math.random()*W, y: Math.random()*H,
+    vx: (Math.random()-.5)*.4, vy: -(Math.random()*.5+.1),
+    r: Math.random()*2+.4,
+    life: Math.random(), maxLife: 1
+  }));
+
+  function tick() {
+    cx.clearRect(0,0,W,H);
+    for(const p of pts) {
+      p.x+=p.vx; p.y+=p.vy; p.life-=.003+Math.random()*.003;
+      if(p.life<=0||p.y<-5){p.x=Math.random()*W;p.y=H+5;p.life=1;}
+      const a = p.life*.5;
+      cx.beginPath();cx.arc(p.x,p.y,p.r,0,6.283);
+      cx.fillStyle=`rgba(45,184,216,${a})`;cx.fill();
+    }
+    // connections
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<90){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);
+      cx.strokeStyle=`rgba(45,184,216,${(1-d/90)*.1})`;cx.lineWidth=.5;cx.stroke();}
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ─────────────────────────────
+   MARQUEE BUILD
+───────────────────────────── */
+const items = ['Xenotropin','Retatrutide','Tirzepatide','Semaglutide','Tesamorelin',
+  'BPC-157','TB-500','CJC-1295','Ipamorelin','MOTS-C','NAD+','GHK-Cu',
+  'Kisspeptin-10','Semax','Selank','Melanotan II','Delta Recover','Wolverine','DSIP'];
+const t = document.getElementById('mtrack');
+t.innerHTML = [...items,...items].map(n =>
+  `<span class="m-item"><span class="m-dot"></span>${n}</span>`).join('');
+
+/* ─────────────────────────────
+   HERO ENTRANCE
+───────────────────────────── */
+const heroTL = gsap.timeline({defaults:{ease:'power3.out'}});
+heroTL
+  .to('#eyebrow',   {opacity:1, y:0, duration:.8}, .3)
+  .from('.reveal-line span', {y:'105%', stagger:.14, duration:1.1, ease:'power4.out'}, .55)
+  .to('#heroSub',   {opacity:1, y:0, duration:.8}, 1.25)
+  .to('#heroBottom',{opacity:1, duration:.7}, 1.5);
+
+/* ─────────────────────────────
+   HERO PARALLAX (content moves up slightly as you scroll)
+───────────────────────────── */
+gsap.to('.hero-content', {
+  yPercent: 25, ease:'none',
+  scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1}
+});
+gsap.to('.hero-bg', {
+  yPercent: 18, ease:'none',
+  scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1}
+});
+
+/* ─────────────────────────────
+   HERO STICKY — scale out the hero as the next section arrives
+───────────────────────────── */
+gsap.to('#hero', {
+  scale: .96, opacity: 0,
+  ease:'none',
+  scrollTrigger:{
+    trigger:'.hero-spacer', start:'top top', end:'top+=80% top', scrub:1
+  }
+});
+
+/* ─────────────────────────────
+   S2: INTRO — text line reveal
+───────────────────────────── */
+gsap.utils.toArray('#introBig .rl span').forEach((el, i) => {
+  gsap.from(el, {
+    y:'105%', duration:.9, ease:'power3.out',
+    scrollTrigger:{trigger:'#introBig', start:'top 72%'},
+    delay: i*.13
+  });
+});
+
+/* ─────────────────────────────
+   COUNTERS
+───────────────────────────── */
+document.querySelectorAll('.cnum').forEach(el => {
+  const target = +el.dataset.to;
+  ScrollTrigger.create({
+    trigger: el, start:'top 82%', once:true,
+    onEnter: () => gsap.to({v:0},{
+      v: target, duration:1.8, ease:'power2.out',
+      onUpdate(){ el.textContent = Math.round(this.targets()[0].v).toLocaleString(); }
+    })
+  });
+});
+
+/* ─────────────────────────────
+   S3: MOLECULE SVG ANIMATIONS
+───────────────────────────── */
+// Slow idle rotation
+gsap.to('#molSvg', {
+  rotation: 360, duration:90, repeat:-1, ease:'none', transformOrigin:'50% 50%'
+});
+
+// Center halo pulse
+gsap.to('#halo', {
+  scale:1.45, opacity:.18, duration:2.8, repeat:-1, yoyo:true,
+  ease:'sine.inOut', transformOrigin:'50% 50%'
+});
+
+// Inner nodes breathe
+gsap.to('#inner-nodes circle', {
+  scale:1.14, duration:2, repeat:-1, yoyo:true,
+  stagger:{each:.28,from:'random'}, ease:'sine.inOut', transformOrigin:'50% 50%'
+});
+
+// Electron pulse
+gsap.utils.toArray('.e').forEach((el,i) => {
+  gsap.to(el, {
+    scale:1.7, opacity:.15, duration:1.6+i*.2, repeat:-1, yoyo:true,
+    ease:'sine.inOut', delay:i*.22, transformOrigin:'50% 50%'
+  });
+});
+
+// Bond dash animation
+const bonds = document.querySelectorAll('#bonds line');
+bonds.forEach((l,i)=>{
+  const len = 180;
+  l.setAttribute('stroke-dasharray',len);
+  l.setAttribute('stroke-dashoffset',len);
+  gsap.to(l,{
+    strokeDashoffset:0, duration:1+i*.08,
+    ease:'power2.out', delay:.2,
+    scrollTrigger:{trigger:'#story',start:'top 80%',once:true}
+  });
+});
+
+/* Molecule state changes per panel */
+const molStates = [
+  { core:'#2db8d8', innerBorder:'rgba(45,184,216,0.55)',  lbl:'Amino Acid Chain · C₂H₅NO₂',   bondsOp:.35 },
+  { core:'#c8a96e', innerBorder:'rgba(200,169,110,0.55)', lbl:'Receptor Binding · Lock & Key', bondsOp:.5  },
+  { core:'#5de8ff', innerBorder:'rgba(93,232,255,0.65)',  lbl:'Signal Cascade · Cellular Response', bondsOp:.65 },
+];
+
+function setMolState(i) {
+  const s = molStates[i];
+  gsap.to('#core', { fill:s.core, duration:.7 });
+  gsap.to('#inner-nodes circle', { stroke:s.innerBorder, duration:.6 });
+  gsap.to('#bonds', { opacity:s.bondsOp, duration:.5 });
+  document.getElementById('molLbl').textContent = s.lbl;
+}
+
+/* Story panels scroll in/out */
+gsap.utils.toArray('.s-panel').forEach((panel, i) => {
+  // Reveal on enter
+  gsap.from(panel, {
+    opacity:0, y:50, duration:.9, ease:'power3.out',
+    scrollTrigger:{trigger:panel, start:'top 68%', toggleActions:'play none none reverse'}
+  });
+  // Molecule state trigger
+  ScrollTrigger.create({
+    trigger: panel, start:'top 55%', end:'bottom 45%',
+    onEnter:    () => setMolState(i),
+    onEnterBack:() => setMolState(i),
+  });
+});
+
+/* ─────────────────────────────
+   S4: MECHANISM STEPS
+───────────────────────────── */
+gsap.from('#mechHdr > *', {
+  y:40, opacity:0, duration:.8, stagger:.18, ease:'power3.out',
+  scrollTrigger:{trigger:'#mechHdr',start:'top 72%'}
+});
+
+// Stagger steps in
+const steps = gsap.utils.toArray('.step');
+gsap.from(steps, {
+  y:60, opacity:0, duration:.7, stagger:.12, ease:'power3.out',
+  scrollTrigger:{trigger:'#stepsGrid',start:'top 75%'}
+});
+
+// Draw progress line as steps appear
+ScrollTrigger.create({
+  trigger:'#stepsGrid', start:'top 75%',
+  onEnter: () => gsap.to('#stepsLineFill',{width:'100%',duration:1.2,ease:'power2.inOut',delay:.2})
+});
+
+/* ─────────────────────────────
+   S5: FORMAT CARDS
+───────────────────────────── */
+gsap.from('#fmtHdr > *', {
+  y:30, opacity:0, duration:.7, stagger:.15, ease:'power3.out',
+  scrollTrigger:{trigger:'#fmtHdr',start:'top 75%'}
+});
+gsap.from('.fc', {
+  y:70, opacity:0, duration:.8, stagger:.15, ease:'power3.out',
+  scrollTrigger:{trigger:'#fmtCards',start:'top 75%'}
+});
+
+/* ─────────────────────────────
+   S6: FIVE PILLARS
+───────────────────────────── */
+['#pr1','#pr2','#pr3','#pr4','#pr5'].forEach((id, i) => {
+  const row = document.querySelector(id);
+  const body = row.querySelector('.pr-body');
+  const icon = row.querySelector('.pr-icon');
+  const isRev = row.classList.contains('rev');
+
+  // Body slides in from right or left
+  gsap.from(body, {
+    opacity:0, x: isRev ? -60 : 60, duration:.9, ease:'power3.out',
+    scrollTrigger:{trigger:row, start:'top 68%'}
+  });
+  // Icon spin in
+  gsap.from(icon, {
+    scale:.4, opacity:0, rotation:-90, duration:.8, ease:'back.out(1.5)',
+    scrollTrigger:{trigger:row, start:'top 68%'}
+  });
+  // Number bg wipe
+  gsap.from(row.querySelector('.pr-num'), {
+    opacity:0, scale:.6, duration:1, ease:'power2.out',
+    scrollTrigger:{trigger:row, start:'top 68%'}
+  });
+});
+
+/* ─────────────────────────────
+   PULL QUOTE
+───────────────────────────── */
+gsap.from('#qtext', {
+  opacity:0, y:40, duration:1, ease:'power3.out',
+  scrollTrigger:{trigger:'#quote',start:'top 65%'}
+});
+gsap.from('#qsrc', {
+  opacity:0, duration:.8, ease:'power2.out',
+  scrollTrigger:{trigger:'#quote',start:'top 60%'},
+  delay:.4
+});
+
+/* ─────────────────────────────
+   FINAL CTA
+───────────────────────────── */
+gsap.from(['#ctaTag','#ctaH','.cta-sub','#ctaBtns'], {
+  opacity:0, y:30, duration:.75, stagger:.18, ease:'power3.out',
+  scrollTrigger:{trigger:'#cta',start:'top 65%'}
+});
+
+/* ─────────────────────────────
+   NAV link active highlight
+───────────────────────────── */
+const navTargets = [
+  {id:'#story',     link:'[href="#story"]'},
+  {id:'#mechanism', link:'[href="#mechanism"]'},
+  {id:'#delivery',  link:'[href="#delivery"]'},
+  {id:'#pillars',   link:'[href="#pillars"]'},
+];
+navTargets.forEach(({id, link}) => {
+  ScrollTrigger.create({
+    trigger: id, start:'top 55%', end:'bottom 55%',
+    onToggle: s => {
+      const el = document.querySelector(`.nav-links ${link}`);
+      if(el) el.style.color = s.isActive ? 'var(--cy)' : '';
+    }
+  });
+});
+
+ScrollTrigger.refresh();
+</script>
+</body>
+</html>
