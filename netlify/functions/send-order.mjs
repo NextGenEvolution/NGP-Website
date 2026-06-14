@@ -14,16 +14,7 @@ function makeInvoiceNumber() {
 // ── build the branded PDF invoice (server-side) ──
 export async function buildInvoicePdf({ items, customer, invoiceNo, subtotal, delivery, grand, logoBytes }) {
   const pdf = await PDFDocument.create();
-  // Compact, content-fitted page height (single full page — no wasted space / phantom 2nd page)
-  const billBottom = 132 + 28 + 12 * 4 + (customer.notes ? 12 : 0); // bill-to block bottom
-  const detailsBottom = 132 + 14 + 13 * 4;                          // invoice-details block bottom
-  let _y = Math.max(billBottom, detailsBottom) + 12;                // table start
-  _y += 24;                  // table header
-  _y += items.length * 30;   // item rows
-  _y += 56;                  // totals block
-  _y += 28 + 92;             // gap + banking box
-  const pageHeight = _y + 34; // footer + bottom margin
-  const page = pdf.addPage([595.28, pageHeight]);
+  const page = pdf.addPage([595.28, 841.89]); // A4 in points
   const { width: W, height: H } = page.getSize();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -117,25 +108,31 @@ export async function buildInvoicePdf({ items, customer, invoiceNo, subtotal, de
   page.drawLine({ start: { x: tx, y: T(y) }, end: { x: R - 6, y: T(y) }, thickness: 1, color: cyan }); y += 16;
   left('TOTAL DUE', tx, y, 12, bold, navy); right(ZAR(grand) + ' ZAR', R - 6, y, 12, bold, cyan);
 
-  // banking box
-  y += 28;
-  const boxH = 92;
+  // payment terms (sits below the totals, fills the upper-middle of the page)
+  y += 30;
+  page.drawLine({ start: { x: L, y: T(y - 2) }, end: { x: R, y: T(y - 2) }, thickness: 0.5, color: lineC });
+  left('PAYMENT TERMS', L, y + 15, 8.5, bold, gray);
+  left('Payment is due on receipt of this invoice. Please use your invoice number as the EFT reference', L, y + 30, 9, font, dark);
+  left('so we can match your payment to your order. Goods are dispatched once payment reflects.', L, y + 43, 9, font, dark);
+
+  // banking box — anchored near the bottom so the page is balanced top-to-bottom
+  const boxH = 96;
+  y = Math.max(y + 64, H - 168);
   page.drawRectangle({ x: L, y: T(y + boxH), width: R - L, height: boxH, color: soft, borderColor: cyan, borderWidth: 1 });
-  left('BANKING DETAILS', L + 12, y + 18, 9, bold, cyan);
-  let bk = y + 36; const bx = L + 12;
-  const bank = (k, v) => { left(k, bx, bk, 9, font, gray); left(v, bx + 95, bk, 9, bold, dark); bk += 14; };
+  left('BANKING DETAILS', L + 12, y + 20, 9, bold, cyan);
+  let bk = y + 40; const bx = L + 12;
+  const bank = (k, v) => { left(k, bx, bk, 9, font, gray); left(v, bx + 95, bk, 9, bold, dark); bk += 15; };
   bank('Bank', 'First National Bank');
   bank('Account Name', 'Next Gen Evolution (Pty) Ltd');
   bank('Account Number', '63150208940');
   bank('Branch Code', '250655');
   const px = L + 300;
-  left('USE THIS PAYMENT REFERENCE', px, y + 22, 8.5, font, gray);
-  left(invoiceNo, px, y + 40, 13, bold, cyan);
-  left('Please quote this reference on your EFT', px, y + 58, 7.5, font, gray);
-  left('so we can match your payment to this order.', px, y + 70, 7.5, font, gray);
+  left('USE THIS PAYMENT REFERENCE', px, y + 26, 8.5, font, gray);
+  left(invoiceNo, px, y + 46, 13, bold, cyan);
+  left('Please quote this on your EFT payment.', px, y + 64, 7.5, font, gray);
 
-  // footer (pinned just below the banking box on the compact page)
-  const fy = H - 12;
+  // footer (pinned to the bottom of the A4 page)
+  const fy = H - 28;
   page.drawLine({ start: { x: L, y: T(fy - 10) }, end: { x: R, y: T(fy - 10) }, thickness: 0.5, color: lineC });
   left('For research use only · Not for human consumption without medical supervision.', L, fy, 7.5, font, gray);
   right('Thank you — Next Gen Evolution', R, fy, 7.5, font, gray);
