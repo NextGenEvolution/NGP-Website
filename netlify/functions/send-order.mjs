@@ -14,7 +14,16 @@ function makeInvoiceNumber() {
 // ── build the branded PDF invoice (server-side) ──
 export async function buildInvoicePdf({ items, customer, invoiceNo, subtotal, delivery, grand, logoBytes }) {
   const pdf = await PDFDocument.create();
-  const page = pdf.addPage([595.28, 841.89]); // A4 in points
+  // Compact, content-fitted page height (single full page — no wasted space / phantom 2nd page)
+  const billBottom = 132 + 28 + 12 * 4 + (customer.notes ? 12 : 0); // bill-to block bottom
+  const detailsBottom = 132 + 14 + 13 * 4;                          // invoice-details block bottom
+  let _y = Math.max(billBottom, detailsBottom) + 12;                // table start
+  _y += 24;                  // table header
+  _y += items.length * 30;   // item rows
+  _y += 56;                  // totals block
+  _y += 28 + 92;             // gap + banking box
+  const pageHeight = _y + 34; // footer + bottom margin
+  const page = pdf.addPage([595.28, pageHeight]);
   const { width: W, height: H } = page.getSize();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -125,8 +134,8 @@ export async function buildInvoicePdf({ items, customer, invoiceNo, subtotal, de
   left('Please quote this reference on your EFT', px, y + 58, 7.5, font, gray);
   left('so we can match your payment to this order.', px, y + 70, 7.5, font, gray);
 
-  // footer
-  const fy = 812;
+  // footer (pinned just below the banking box on the compact page)
+  const fy = H - 12;
   page.drawLine({ start: { x: L, y: T(fy - 10) }, end: { x: R, y: T(fy - 10) }, thickness: 0.5, color: lineC });
   left('For research use only · Not for human consumption without medical supervision.', L, fy, 7.5, font, gray);
   right('Thank you — Next Gen Evolution', R, fy, 7.5, font, gray);
