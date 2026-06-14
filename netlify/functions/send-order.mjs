@@ -78,12 +78,13 @@ export async function buildInvoicePdf({ items, customer, invoiceNo, subtotal, de
 
   y = Math.max(by, ry) + 12;
 
-  // items table header
-  page.drawRectangle({ x: L, y: T(y) - 4, width: R - L, height: 20, color: cyan });
-  left('DESCRIPTION', L + 6, y + 9, 8.5, bold, navy);
-  center('QTY', 330, y + 9, 8.5, bold, navy);
-  right('UNIT', 450, y + 9, 8.5, bold, navy);
-  right('AMOUNT', R - 6, y + 9, 8.5, bold, navy);
+  // items table header — bar spans top-coords [y, y+18]; text baseline centered at y+12
+  page.drawRectangle({ x: L, y: T(y + 18), width: R - L, height: 18, color: cyan });
+  const hb = y + 12;
+  left('DESCRIPTION', L + 6, hb, 8.5, bold, navy);
+  center('QTY', 330, hb, 8.5, bold, navy);
+  right('UNIT', 450, hb, 8.5, bold, navy);
+  right('AMOUNT', R - 6, hb, 8.5, bold, navy);
   y += 24;
 
   items.forEach((i, idx) => {
