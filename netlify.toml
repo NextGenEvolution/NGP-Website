@@ -8,3 +8,5 @@
 # Keep build dependencies out of the published static site
 [build.processing]
   skip_processing = false
+
+# redeploy trigger
