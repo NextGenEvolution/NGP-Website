@@ -229,21 +229,7 @@ export const handler = async (event) => {
     return { statusCode: 200, headers: cors(), body: JSON.stringify({ ok: true }) };
   } catch (err) {
     console.error('send-order error:', err);
-    return {
-      statusCode: 500,
-      headers: cors(),
-      body: JSON.stringify({
-        ok: false,
-        error: 'Could not process order',
-        debug: String((err && err.stack) || (err && err.message) || err).slice(0, 500),
-        env: {
-          SMTP_HOST: process.env.SMTP_HOST || null,
-          SMTP_PORT: process.env.SMTP_PORT || null,
-          SMTP_USER_set: !!process.env.SMTP_USER,
-          SMTP_PASS_set: !!process.env.SMTP_PASS,
-        },
-      }),
-    };
+    return { statusCode: 500, headers: cors(), body: JSON.stringify({ ok: false, error: 'Could not process order' }) };
   }
 };
 
