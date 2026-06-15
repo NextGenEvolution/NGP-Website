@@ -1133,6 +1133,11 @@ footer {
     <!-- Order summary inside modal -->
     <div id="co-summary" style="margin:20px 0 16px;padding:16px;background:var(--deep);border:1px solid var(--border);font-size:13px;"></div>
 
+    <label style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:16px;cursor:pointer;">
+      <input type="checkbox" id="co-terms" style="width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--cyan);cursor:pointer;">
+      <span>I have read and agree to the <a href="terms-and-conditions.html" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(45,184,216,0.4);">Terms &amp; Conditions</a>.</span>
+    </label>
+
     <div id="co-status" style="display:none;font-size:12px;margin-bottom:12px;padding:10px 14px;font-family:'Space Mono',monospace;letter-spacing:0.05em;"></div>
     <button class="btn-send" id="co-submit" onclick="submitCheckout()">PLACE ORDER</button>
     <p style="text-align:center;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:0.08em;color:var(--muted);margin-top:12px;opacity:0.7;">Your order is emailed to NGE · invoice to follow · ZAR</p>
@@ -2151,6 +2156,11 @@ function submitCheckout() {
   if (!emailOk) { showCoStatus('Please enter a valid email address.', 'error'); return; }
 
   if (cart.length === 0) { showCoStatus('Your cart is empty.', 'error'); return; }
+
+  if (!document.getElementById('co-terms').checked) {
+    showCoStatus('Please accept the Terms & Conditions to continue.', 'error');
+    return;
+  }
 
   const btn = document.getElementById('co-submit');
   btn.disabled = true;
